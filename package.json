@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "zolgwa",
   "version": "1.0.0",
   "description": "zolgwa",
@@ -14,4 +15,20 @@
   },
   "author": "kmk",
   "license": "ISC"
+=======
+	"name": "NodejsStarterApp",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"start": "node app.js"
+	},
+	"dependencies": {
+		"express": "4.13.x",
+		"cfenv": "1.0.x"
+	},
+	"repository": {},
+	"engines": {
+		"node": "4.x"
+	} 
+>>>>>>> c3881aaa6884c816c9c389bf78906f5aff1a8433
 }
