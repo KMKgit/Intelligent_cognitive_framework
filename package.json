@@ -1,0 +1,17 @@
+{
+  "name": "zolgwa",
+  "version": "1.0.0",
+  "description": "zolgwa",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://hub.jazz.net/git/infoseckmk/infosec_icf_app.git"
+  },
+  "author": "kmk",
+  "license": "ISC"
+}
