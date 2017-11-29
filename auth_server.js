@@ -26,9 +26,10 @@ var BasicStrategy = require('passport-http').BasicStrategy;
 var ClientPasswordStrategy = require('passport-oauth2-client-password').Strategy;
 var BearerStrategy = require('passport-http-bearer').Strategy;
 var nodemailer = require('nodemailer');
+var amazonAddress = 'http://52.78.70.47';
 
 var GLOBAL = {
-  serverAddress: 'http://164.125.70.62',
+  serverAddress: amazonAddress,
   serverPort: 3000,
   mongoStoreOptions: {
     ttl: 60 * 60 * 24 * 7,
@@ -349,36 +350,68 @@ app.post('/login', function(req, res, next) {
 });
 
 app.get('/test', function(req, res, next){
-    // authorizationURL: 'http://164.125.70.62:3000/auth',
-    // tokenURL: 'http://164.125.70.62:3000/token',
-    // clientID: '123-456-789',
-    // clientSecret: 'shhh-its-a-secret',
-    // callbackURL: 'http://164.125.70.62:8080/oauth2/callback'
-  // GLOBAL.db.collection(TABLE_NAME.CLIENT).remove({
-  //   client_id: '123-456-789'  
-  // }, function(err) {
-  //   console.log(err); 
-  //   console.log('good');
-  // });
-  // GLOBAL.db.collection(TABLE_NAME.CLIENT).insertOne({
-  //   id: '1',
-  //   name: 'app',
-  //   client_id: '123-456-789',
-  //   client_secret: 'shhh-its-a-secret',
-  //   redirect_uri: 'http://164.125.70.62:8080/oauth2/callback'
-  // }, function(err) {
-  //   if (err) {
-  //     return console.log(err);
-  //   }
-  //   return console.log('good');
-  // });
-  
-  // GLOBAL.db.collection(TABLE_NAME.USER).updateOne({
-  //   id: 'admin'
-  // }, {$set:{email: '4dimensionn@naver.com'}}, function(err, doc) {
-  //   if (err) return;
-  //   console.log(err, doc);
-  // });
+/*
+
+     authorizationURL: 'http://52.78.78.214:3000/auth',
+     tokenURL: 'http://52.78.78.214:3000/token',
+     clientID: '123-456-789',
+     clientSecret: 'shhh-its-a-secret',
+     callbackURL: 'http://52.78.78.214:8080/oauth2/callback'
+*/
+   GLOBAL.db.collection(TABLE_NAME.CLIENT).remove({
+     client_id: '123-456-789'  
+   }, function(err) {
+     console.log(err); 
+     console.log('good');
+   });
+   GLOBAL.db.collection(TABLE_NAME.CLIENT).insertOne({
+     id: '1',
+     name: 'app',
+     client_id: '123-456-789',
+     client_secret: 'shhh-its-a-secret',
+     redirect_uri: amazonAddress + ':8080/oauth2/callback'
+   }, function(err) {
+     if (err) {
+       return console.log(err);
+     }
+     return console.log('good');
+   });
+        cryptPassword('1234', function(err, hash) {
+          if (err) {
+            console.error(err);
+            return res.json({
+              success: false,
+              message: err
+            });
+          } 
+          GLOBAL.db.collection(TABLE_NAME.USER).insertOne({
+            id: 'admin',
+            email: 'clevermk7211@gmail.com',
+            password: hash,
+            valid: true
+          }, function(err, r) {
+            if (err) {
+              console.error(err);
+              return res.json({
+                success: false,
+                message: err
+              });
+            }
+            return res.json({
+              success: true
+            });
+          });
+        });
+
+/*
+   GLOBAL.db.collection(TABLE_NAME.USER).insertOne({
+     id: 'admin'
+   }, {$set:{email: '4dimensionn@naver.com'}}, function(err, doc) {
+     if (err) return;
+     console.log(err, doc);
+	console.log('QQQQ');
+   });
+*/
 });
 
 app.post('/logout', 
@@ -692,6 +725,7 @@ app.post('/api/request', passport.authenticate('bearer', {session: false}), func
 app.get('/api/me',
   passport.authenticate('bearer', { session: false }),
   function(req, res) {
+    console.log(req.user);
     return res.json(req.user);
   });
   

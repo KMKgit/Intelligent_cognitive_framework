@@ -1,0 +1,2 @@
+,batch_size,epoch,hidden_units,input_dim,learning_rate,nb_classes,path_trained_dir,time_step,validation_split
+0,128,3000,10,1,1.0,8,,10,0.1

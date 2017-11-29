@@ -88,6 +88,8 @@ domready(function() {
       // reqData.columns = {};
       reqData.apiKey = apiKey;
       reqData.method = method;
+      reqData.model = $('#model-key').html();
+      console.log(reqData.model);
       // reqData.columns.x = {value:$('#xselect').val(), type:$('#xtype').val()};
       // reqData.columns.y = {value:$('#yselect').val(), type:$('#ytype').val()};
       // reqData.columns.label = {value:$('#labelselect').val(), type:$('#labeltype').val()};
@@ -98,6 +100,7 @@ domready(function() {
       var formData = new FormData(); 
       formData.append('apiKey', JSON.stringify(apiKey));
       formData.append('method', JSON.stringify(method));
+      formData.append('model', JSON.stringify($('#model-key').html()));
       formData.append('csv', $('#file')[0].files[0]);
       $.ajax({
         url: '/test',

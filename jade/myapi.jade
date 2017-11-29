@@ -1,5 +1,5 @@
 - var page_title = '지능형 인지 프레임워크';
-- var tmp = ["active","","success","","warning","","danger","","info",""]
+- var tmp = ["danger","warning","success"]
 include /jade/head.jade
 
 body
@@ -47,8 +47,8 @@ body
             .row
               .pull-left.col-lg-9
                 a.btn.btn-default(href='createapi', role='button') 
-                    i.glyphicon.glyphicon-plus 
-                    |  Create
+                  i.glyphicon.glyphicon-plus
+                  |  Create
                 button#remove.btn.btn-default
                   i.glyphicon.glyphicon-remove
                   |  Delete
@@ -68,16 +68,18 @@ body
                         thead
                           tr(role='row')
                             th.text-center(style='width: 6%;', colspan='1', rowspan='1', tabindex='0') 선택
-                            th#api-name-th.text-center.sorting(style='width: 14%;', colspan='1', rowspan='1', aria-controls='dataTables-example', tabindex='0') API 이름
-                            th#api-key-th.text-center.sorting(style='width: 24%;', colspan='1', rowspan='1', aria-controls='dataTables-example', tabindex='0') API 키
+                            th#api-name-th.text-center.sorting(style='width: 10%;', colspan='1', rowspan='1', aria-controls='dataTables-example', tabindex='0') API 이름
+                            th#api-key-th.text-center.sorting(style='width: 18%;', colspan='1', rowspan='1', aria-controls='dataTables-example', tabindex='0') API 키
                             th#method-th.text-center.sorting(style='width: 10%;', colspan='1', rowspan='1', aria-controls='dataTables-example', tabindex='0') 방법
                             th#valid-th.text-center.sorting(style='width: 10%;', colspan='1', rowspan='1', aria-controls='dataTables-example', tabindex='0') 학습완료
-                            th#write-time-th.text-center.sorting(style='width: 20%;', colspan='1', rowspan='1', aria-controls='dataTables-example', tabindex='0') 등록일
+                            th#write-time-th.text-center.sorting(style='width: 14%;', colspan='1', rowspan='1', aria-controls='dataTables-example', tabindex='0') 등록일
                             th#api-info.text-center.sorting(style='width: 8%;', colspan='1', rowspan='1', aria-controls='dataTables-example', tabindex='0') 정보
+                            th#api-info.text-center.sorting(style='width: 8%;', colspan='1', rowspan='1', aria-controls='dataTables-example', tabindex='0') Weight
                             th#api-test.text-center.sorting(style='width: 8%;', colspan='1', rowspan='1', aria-controls='dataTables-example', tabindex='0') 테스트
+                            th#api-test.text-center.sorting(style='width: 8%;', colspan='1', rowspan='1', aria-controls='dataTables-example', tabindex='0') 재학습
                         tbody#tableBody 
                           - for (var i = 0; i < Math.min(10, myapis.length); ++i) {
-                            tr.text-center(class=tmp[i%10])
+                            tr.text-center(class=tmp[myapis[i].valid+1])
                               td.center
                                 input(type='checkbox', id='chk' + i, value = 'true')
                               td.center
@@ -101,8 +103,26 @@ body
                                 a(href='/api/info?aid=' + myapis[i].api_key)
                                   i.fa.fa-arrow-circle-right
                               td.center
+                                select
+                                if myapis[i].models
+                                  each val in myapis[i].models
+                                    option(checked=(val==myapis[i].modelKey))
+                                      | val
+                                // select.form-control
+                                //   option |#{myapis[i].method}
+                                //   option |#{myapis[i].method}
+                                //   option |#{myapis[i].method}
+                                //   option |#{myapis[i].method}
+                              td.center
                                 if myapis[i].valid == 1
                                   a(href='/api?aid=' + myapis[i].api_key)
+                                    i.fa.fa-arrow-circle-right
+                                else
+                                  a(href='/api/err?aid=' + myapis[i].api_key)
+                                    i.fa.fa-warning
+                              td.center
+                                if myapis[i].valid == 1
+                                  a(href='/relearning?aid=' + myapis[i].api_key)
                                     i.fa.fa-arrow-circle-right
                                 else
                                   a(href='/api/err?aid=' + myapis[i].api_key)
@@ -142,9 +162,3 @@ script(src='/link/datatables-responsive/js/dataTables.responsive.js')
 script(src='/link/startbootstrap-sb-admin-2/dist/js/sb-admin-2.js')
 script(src='/js/myapi.js')
 script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
-script.
-  $(document).ready(function() {
-    $('#dataTables-example').DataTable({
-      responsive: true
-    });
-  });

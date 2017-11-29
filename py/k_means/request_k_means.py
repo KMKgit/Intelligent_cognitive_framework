@@ -6,6 +6,7 @@ import cPickle
 import json
 import numpy as np
 import codecs
+import time
 from os import getcwd
 from os import environ
 from os.path import dirname
@@ -31,9 +32,6 @@ try:
   columns = f.read().splitlines()
   t = json.load(p)
   k = int(t['k'])
-  random_seed = int(t['random_seed'])
-  if (random_seed == 0) :
-    random_seed = None;
   f.close()
   p.close()
   
@@ -42,32 +40,23 @@ try:
     csv_data = list(reader)
     n_samples = len(csv_data) - 1
     n_features = len(csv_data[0])
-    data = np.empty((n_samples, 2))
+    data = np.empty((n_samples, n_features))
     
     for i in range(n_samples):
       temp = []
       for j in range(n_features):
         temp.append(csv_data[i+1][j])
       data[i] = np.asarray(temp, dtype=np.float)
-      
-  transformation = [[ 0.60834549, -0.63667341], [-0.40887718, 0.85253229]]
-  data_aniso = np.dot(data, transformation)
   
-  k_means = joblib.load(PATH + '/data/' + sys.argv[1] + '/pkl/' + sys.argv[1] + '.pkl')
-  k_means_tf = joblib.load(PATH + '/data/' + sys.argv[1] + '/pkl/' + sys.argv[1] + '_tf.pkl')
-  
+  k_means = joblib.load(PATH + '/data/' + sys.argv[1] + '/' + sys.argv[3] + '/' + sys.argv[1] + '.pkl')
   P = k_means.predict(data)
-  AP = k_means_tf.predict(data_aniso)
   
   req = open(PATH + '/data/' + sys.argv[1] + '/request/' + sys.argv[2] + '.req', 'w')
   retP = []
-  retAP = []
   for i in range(len(P)):
     retP.append(str(P[i]));
-    retAP.append(str(AP[i]));
   json.dump({
               'predict' : retP,
-              'aniso_predict' : retAP
             }, req, separators=(',',':'))
   req.close()
 except:

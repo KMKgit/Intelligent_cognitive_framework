@@ -29,14 +29,17 @@ domready(function() {
   var ALGORITHMS = [
     '',
     'KNN',
-    'K_means',
-    'RBM',
-    'RFR',
+    'Logistic',
+    'ANN',
+    'RNN',
+    'LSTM',
+    'GRU',
+    'Ensemble',
     'MLR',
     'SVR',
-    'RNN',
-    'GRU',
-    'LSTM'
+    'RFR',
+    'K_means',
+    'Energy_Watt_Service'
   ];
   
   $('#next1').click(function() {

@@ -1,4 +1,643 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+
+module.exports = function() {
+  return {
+    cmd: {
+      KNN: 'knn',
+      Logistic: 'logistic',
+      ANN: 'ann',
+      RNN: 'rnn',
+      LSTM: 'lstm',
+      GRU: 'gru',
+      Energy_Watt_Service: 'energy_watt_service',
+      MLR: 'mlr',
+      SVR: 'svr',
+      RFR: 'rfr',
+      K_means: 'k_means'
+    }, 
+    KNN: 'KNN',
+    Logistic: 'Logistic',
+    ANN: 'ANN',
+    RNN: 'RNN',
+    LSTM: 'LSTM',
+    GRU: 'GRU',
+    Energy_Watt_Service: 'Energy_Watt_Service',
+    MLR: 'MLR',
+    SVR: 'SVR',
+    RFR: 'RFR',
+    K_means: 'K_means'
+  };
+}();
+},{}],2:[function(require,module,exports){
+var $ = require('jquery');
+var commonConst = require('../js/common-const');
+module.exports = function(){
+  
+  
+  function DropdownElement(_name, _values) {
+    this.select = document.createElement('select');
+    this.select.className = 'form-control';
+    var option;
+    for (var i = 0; i < _values.length; ++i) {
+      option = document.createElement('option');
+      option.value = _values[i];
+      option.innerHTML = _values[i];
+      this.select.appendChild(option);
+    }
+    
+    this.getValue = function() {
+      return this.select.value;
+    };
+    
+    this.getNode = function() {
+      return this.select;
+    };
+  }
+  
+  function ParameterInformation(_name, _type, _input, _label, _inputType) {
+    _inputType = _inputType || 'input';
+    this.name = _name;
+    this.type = _type;
+    this.inputElement = _input;
+    this.labelElement = _label;
+    this.inputType = _inputType;
+    
+    this.getValue = function() {
+      if (this.inputType === 'input') {
+        return this.inputElement.value;
+      } else if (this.inputType === 'select') {
+        return this.inputElement.getValue();
+      }
+      return null;
+    };
+    
+    this.getNode = function() {
+      if (this.inputType === 'input') {
+        return this.inputElement;
+      } else if (this.inputType === 'select') {
+        return this.inputElement.getNode();
+      }
+    };
+  }
+  
+  
+  
+  function mKnn(parent) {
+    //k, columns, target      
+    var kLabel = document.createElement('label');
+    var kInput = document.createElement('input');
+    kLabel.innerHTML = 'K';
+    kLabel.className = 'col-sm-1 control-label';
+    kInput.className = 'form-control';
+    kInput.placeholder = 'enter the int K, K shall be abnormal to number of columns';
+    var targetLabel = document.createElement('label');
+    var targetInput = document.createElement('input');
+    targetLabel.innerHTML = 'label name';
+    targetLabel.className = 'col-sm-1 control-label';
+    targetInput.className = 'form-control';
+    targetInput.placeholder = 'enter the identifier. (ex) species';
+    parent.innerHTML = '';
+    var paramInfo = [
+      new ParameterInformation('k', 'string', kInput, kLabel),
+      new ParameterInformation('target', 'string', targetInput, targetLabel),
+    ];
+    for (var i = 0; i < paramInfo.length; ++i) {
+      parent.appendChild(paramInfo[i].labelElement);
+      parent.appendChild(paramInfo[i].inputElement);
+      parent.appendChild(document.createElement('br'));
+    }
+    return paramInfo;
+  }
+  
+  function mKnnValidate(csvArr, typesArr) {
+  }
+  
+  function mLogistic(parent) {
+    var learningRateLabel = document.createElement('label');  
+    //var nIterLabel = document.createElement('label');  
+    //var nComponentsLabel = document.createElement('label');
+    //var logisticCLabel = document.createElement('label');  
+    var learningRateInput = document.createElement('input');  
+    //var nIterInput = document.createElement('input');  
+    var nComponentsInput = document.createElement('input');
+    //var logisticCInput = document.createElement('input');  
+    var targetLabel = document.createElement('label');
+    var targetInput = document.createElement('input');
+    
+    learningRateLabel.innerHTML = 'learning rate';
+    learningRateLabel.className = 'col-sm-10 control-label';
+    learningRateInput.className = 'form-control';
+    learningRateInput.placeholder = '0.06';
+    
+    //nIterLabel.innerHTML = 'number of interations';
+    //nIterLabel.className = 'col-sm-10 control-label';
+    //nIterInput.className = 'form-control';
+    //nIterInput.placeholder = '20';
+    
+    //nComponentsLabel.innerHTML = 'number of components';
+    //nComponentsLabel.className = 'col-sm-10 control-label';
+    //nComponentsInput.className = 'form-control';
+    //nComponentsInput.placeholder = '100';
+    
+    //logisticCLabel.innerHTML = 'logistic c';
+    //logisticCLabel.className = 'col-sm-10 control-label';
+    //logisticCInput.className = 'form-control';
+    //logisticCInput.placeholder = '6000.0';
+    
+    targetLabel.innerHTML = 'label name';
+    targetLabel.className = 'col-sm-10 control-label';
+    targetInput.className = 'form-control';
+    targetInput.placeholder = '(ex) number';
+    
+    
+    parent.innerHTML = '';
+    var paramInfo = [
+      new ParameterInformation('learning_rate', 'string', learningRateInput, learningRateLabel),
+      //new ParameterInformation('n_iter', 'string', nIterInput, nIterLabel),
+      //new ParameterInformation('n_components', 'string', nComponentsInput, nComponentsLabel),
+      //new ParameterInformation('logistic_c', 'string', logisticCInput, logisticCLabel),
+      new ParameterInformation('target', 'string', targetInput, targetLabel)
+    ];
+    for (var i = 0; i < paramInfo.length; ++i) {
+      parent.appendChild(paramInfo[i].labelElement);
+      // parent.appendChild(paramInfo[i].inputElement);
+      parent.appendChild(paramInfo[i].getNode());
+      parent.appendChild(document.createElement('br'));
+    }
+    return paramInfo;
+  }
+  
+  function mLogisticValidate(csvArr, typesArr) {
+  }
+  
+  function mRfr(parent) {
+    var nEstimatorsLabel = document.createElement('label');  
+    var criterionLabel = document.createElement('label');  
+    var randomStateLabel = document.createElement('label');
+    var featuresColLabel = document.createElement('label');  
+    var predictColLabel = document.createElement('label');  
+    var nEstimatorsInput = document.createElement('input');  
+    var criterionInput = document.createElement('input');  
+    var randomStateInput = document.createElement('input');
+    var featuresColInput = document.createElement('input');  
+    var predictColInput = document.createElement('input');  
+    
+    nEstimatorsLabel.innerHTML = 'number of estimators';
+    nEstimatorsLabel.className = 'col-sm-1 control-label';
+    nEstimatorsInput.className = 'form-control';
+    nEstimatorsInput.placeholder = '';
+    
+    criterionLabel.innerHTML = 'criterion';
+    criterionLabel.className = 'col-sm-1 control-label';
+    criterionInput.className = 'form-control';
+    criterionInput.placeHolder = '';
+    
+    randomStateLabel.innerHTML = 'random state';
+    randomStateLabel.className = 'col-sm-1 control-label';
+    randomStateInput.className = 'form-control';
+    randomStateInput.placeHolder = '';
+    
+    featuresColLabel.innerHTML = 'features columns';
+    featuresColLabel.className = 'col-sm-1 control-label';
+    featuresColInput.className = 'form-control';
+    featuresColInput.placeHolder = '';
+    
+    predictColLabel.innerHTML = 'predict column';
+    predictColLabel.className = 'col-sm-1 control-label';
+    predictColInput.className = 'form-control';
+    predictColInput.placeHolder = '';
+    
+    parent.innerHTML = '';
+    var paramInfo = [
+      new ParameterInformation('n_estimators', 'string', nEstimatorsInput, nEstimatorsLabel),
+      new ParameterInformation('criterion', 'string', criterionInput, criterionLabel),
+      new ParameterInformation('random_state', 'string', randomStateInput, randomStateLabel),
+      new ParameterInformation('features', 'array[string]', featuresColInput, featuresColLabel),
+      new ParameterInformation('predict_col', 'string', predictColInput, predictColLabel)
+    ];
+    
+    for (var i = 0; i < paramInfo.length; ++i) {
+      parent.appendChild(paramInfo[i].labelElement);
+      parent.appendChild(paramInfo[i].getNode());
+      parent.appendChild(document.createElement('br'));
+    }
+    return paramInfo;
+  }
+  
+  function mRfrValidate(csvArr, typesArr) {
+    
+    
+  }
+  
+  function mMlr(parent) {
+    var m_fit_interceptLabel = document.createElement('label');
+    var m_fit_interceptInput = document.createElement('input');
+    var m_label_nameLabel = document.createElement('label');
+    var m_label_nameInput = document.createElement('input');
+    
+    m_label_nameLabel.innerHTML = 'label name';
+    m_label_nameLabel.className = 'col-sm-10 control-label';
+    m_label_nameInput.className = 'form-control';
+    m_label_nameInput.placeholder = 'enter the label name';
+    
+    
+    m_fit_interceptLabel.innerHTML = 'm_fit_intercept';
+    m_fit_interceptLabel.className = 'col-sm-10 control-label';
+    m_fit_interceptInput.className = 'form-control';
+    m_fit_interceptInput.placeholder = 'boolean, 0 or 1';
+    
+    
+    parent.innerHTML = '';
+    var paramInfo = [
+      new ParameterInformation('target', 'string', m_label_nameInput, m_label_nameLabel),
+      new ParameterInformation('m_fit_intercept', 'string', m_fit_interceptInput, m_fit_interceptLabel)
+    ];
+    for (var i = 0; i < paramInfo.length; ++i) {
+      parent.appendChild(paramInfo[i].labelElement);
+      parent.appendChild(paramInfo[i].inputElement);
+      parent.appendChild(document.createElement('br'));
+    }
+    return paramInfo;
+  }
+  
+  function mMlrValidate(csvArr, typesArr) {
+  }
+  
+  function mSvr(parent) {
+//    var m_kernelLabel = document.createElement('label');
+//    var m_kernelInput = document.createElement('input');
+//    m_kernelLabel.innerHTML = 'm_kernel';
+//    m_kernelLabel.className = 'col-sm-10 control-label';
+//    m_kernelInput.className = 'form-control';
+//    m_kernelInput.placeholder = '';
+//    var m_CLabel = document.createElement('label');
+//    var m_CInput = document.createElement('input');
+//    m_CLabel.innerHTML = 'm_C';
+//    m_CLabel.className = 'col-sm-10 control-label';
+//    m_CInput.className = 'form-control';
+//    m_CInput.placeholder = '';
+//    var m_tolLabel = document.createElement('label');
+//    var m_tolInput = document.createElement('input');
+//    m_tolLabel.innerHTML = 'm_tol';
+//    m_tolLabel.className = 'col-sm-10 control-label';
+//    m_tolInput.className = 'form-control';
+//    m_tolInput.placeholder = '';
+//    var m_cache_sizeLabel = document.createElement('label');
+//    var m_cache_sizeInput = document.createElement('input');
+//    m_cache_sizeLabel.innerHTML = 'm_cache_size';
+//    m_cache_sizeLabel.className = 'col-sm-10 control-label';
+//    m_cache_sizeInput.className = 'form-control';
+//    m_cache_sizeInput.placeholder = '';
+//    var m_coef0Label = document.createElement('label');
+//    var m_coef0Input = document.createElement('input');
+//    m_coef0Label.innerHTML = 'm_coef0';
+//    m_coef0Label.className = 'col-sm-10 control-label';
+//    m_coef0Input.className = 'form-control';
+//    m_coef0Input.placeholder = '';
+//    var m_degreeLabel = document.createElement('label');
+//    var m_degreeInput = document.createElement('input');
+//    m_degreeLabel.innerHTML = 'm_degree';
+//    m_degreeLabel.className = 'col-sm-10 control-label';
+//    m_degreeInput.className = 'form-control';
+//    m_degreeInput.placeholder = '';
+    var m_label_nameLabel = document.createElement('label');
+    var m_label_nameInput = document.createElement('input');
+    m_label_nameLabel.innerHTML = 'label name';
+    m_label_nameLabel.className = 'col-sm-10 control-label';
+    m_label_nameInput.className = 'form-control';
+    m_label_nameInput.placeholder = 'enter the label name';
+    var m_epsilonLabel = document.createElement('label');
+    var m_epsilonInput = document.createElement('input');
+    m_epsilonLabel.innerHTML = 'epsilon';
+    m_epsilonLabel.className = 'col-sm-10 control-label';
+    m_epsilonInput.className = 'form-control';
+    m_epsilonInput.placeholder = '0.001';
+//    var m_max_iterLabel = document.createElement('label');
+//    var m_max_iterInput = document.createElement('input');
+//    m_max_iterLabel.innerHTML = 'm_max_iter';
+//    m_max_iterLabel.className = 'col-sm-10 control-label';
+//    m_max_iterInput.className = 'form-control';
+//    m_max_iterInput.placeholder = '';
+//    var m_gammaLabel = document.createElement('label');
+//    var m_gammaInput = document.createElement('input');
+//    m_gammaLabel.innerHTML = 'm_gamma';
+//    m_gammaLabel.className = 'col-sm-10 control-label';
+//    m_gammaInput.className = 'form-control';
+//    m_gammaInput.placeholder = '';
+//    var predict_colLabel = document.createElement('label');
+//    var predict_colInput = document.createElement('input');
+//    predict_colLabel.innerHTML = 'predict_col';
+//    predict_colLabel.className = 'col-sm-10 control-label';
+//    predict_colInput.className = 'form-control';
+//    predict_colInput.placeholder = '';
+//    var featuresLabel = document.createElement('label');
+//    var featuresInput = document.createElement('input');
+//    featuresLabel.innerHTML = 'features';
+//    featuresLabel.className = 'col-sm-10 control-label';
+//    featuresInput.className = 'form-control';
+//    featuresInput.placeholder = '';
+    
+    parent.innerHTML = '';
+    var paramInfo = [
+//      new ParameterInformation('m_kernel', 'string', m_kernelInput, m_kernelLabel),
+//      new ParameterInformation('m_C', 'string', m_CInput, m_CLabel),
+//      new ParameterInformation('m_tol', 'string', m_tolInput, m_tolLabel),
+//      new ParameterInformation('m_cache_size', 'string', m_cache_sizeInput, m_cache_sizeLabel),
+//      new ParameterInformation('m_coef0', 'string', m_coef0Input, m_coef0Label),
+//      new ParameterInformation('m_degree', 'string', m_degreeInput, m_degreeLabel),
+      new ParameterInformation('target', 'string', m_label_nameInput, m_label_nameLabel),
+      new ParameterInformation('epsilon', 'string', m_epsilonInput, m_epsilonLabel),
+//      new ParameterInformation('m_max_iter', 'string', m_max_iterInput, m_max_iterLabel),
+//      new ParameterInformation('m_gamma', 'string', m_gammaInput, m_gammaLabel),
+//      new ParameterInformation('predict_col', 'string', predict_colInput, predict_colLabel),
+//      new ParameterInformation('features', 'string', featuresInput, featuresLabel)
+    ];
+      // ['k', kInput, kLabel],
+      // ['columns', columnsInput, columnsLabel],
+      // ['target', targetInput, targetLabel]];
+    for (var i = 0; i < paramInfo.length; ++i) {
+      parent.appendChild(paramInfo[i].labelElement);
+      parent.appendChild(paramInfo[i].inputElement);
+      parent.appendChild(document.createElement('br'));
+    }
+    return paramInfo;
+  }
+  
+  function mSvrValidate(csvArr, typesArr) {
+  }
+  
+  function mKm(parent) {
+    var kLabel = document.createElement('label');
+    var kInput = document.createElement('input');
+    //var randomseedLabel = document.createElement('label');
+    //var randomseedInput = document.createElement('input');
+    
+    kLabel.innerHTML = 'K cluster';
+    kLabel.className = 'col-sm-10 control-label';
+    kInput.className = 'form-control';
+    kInput.placeholder = 'number of cluster';
+    
+    //randomseedLabel.innerHTML = 'random state';
+    //randomseedLabel.className = 'col-sm-10 control-label';
+    //randomseedInput.className = 'form-control';
+    //randomseedInput.placeHolder = 'for centroid, if you want randomstate input to 0';
+    
+    parent.innerHTML = '';
+    var paramInfo = [
+      new ParameterInformation('k', 'string', kInput, kLabel)
+    ];
+    
+    for (var i = 0; i < paramInfo.length; ++i) {
+      parent.appendChild(paramInfo[i].labelElement);
+      parent.appendChild(paramInfo[i].getNode());
+      parent.appendChild(document.createElement('br'));
+    }
+    return paramInfo;
+  }
+  
+  function mKmValidate(csvArr, typesArr) {
+    
+    
+  }
+  
+  function mLstm(parent) {
+    var nameLabel = document.createElement('label');
+    var nameInput = document.createElement('input');
+    var learning_rateLabel = document.createElement('label');
+    var learning_rateInput = document.createElement('input');
+    var batch_sizeLabel = document.createElement('label');
+    var batch_sizeInput = document.createElement('input');
+    var hidden_layerLabel = document.createElement('label');
+    var hidden_layerInput = document.createElement('input');
+    var hidden_unitLabel = document.createElement('label');
+    var hidden_unitInput = document.createElement('input');
+    var dropoutLabel = document.createElement('label');
+    var dropoutInput = document.createElement('input');
+    var epochLabel = document.createElement('label');
+    var epochInput = document.createElement('input');
+    var activation_functionLabel = document.createElement('label');
+    var actv = ['linear', 'sigmoid', 'softmax', 'softplus', 'softsign', 'relu', 'tanh', 'hard_sigmoid'];
+    var activation_functionInput = new DropdownElement('act', actv);
+    var loss_functionLabel = document.createElement('label');
+    var lf = ['mean_squared_error',
+        'mean_absolute_error',
+        'mean_absolute_percentage_error',
+        'mean_squared_logarithmic_error',
+        'squared_hinge',
+        'hinge',
+        'categorical_crossentropy',
+        'sparse_categorical_crossentropy',
+        'binary_crossentropy',
+        'kullback_leibler_divergence',
+        'poisson',
+        'cosine_proximity'];
+    var loss_functionInput = new DropdownElement('lf', lf);
+    var data_dimensionLabel = document.createElement('label');
+    var data_dimensionInput = document.createElement('input');
+    var timestepsLabel = document.createElement('label');
+    var timestepsInput = document.createElement('input');
+    
+    nameLabel.innerHTML = 'label name';
+    nameLabel.className = 'col-sm-10 control-label';
+    nameInput.className = 'form-control';
+    nameInput.placeholder = 'Enter the label name';
+    
+    learning_rateLabel.innerHTML = 'learning_rate';
+    learning_rateLabel.className = 'col-sm-10 control-label';
+    learning_rateInput.className = 'form-control';
+    learning_rateInput.placeholder = 'Enter the learning rate';
+    
+    batch_sizeLabel.innerHTML = 'batch size';
+    batch_sizeLabel.className = 'col-sm-10 control-label';
+    batch_sizeInput.className = 'form-control';
+    batch_sizeInput.placeholder = 'Enter the batch size';
+    
+    hidden_layerLabel.innerHTML = 'hidden layer';
+    hidden_layerLabel.className = 'col-sm-10 control-label';
+    hidden_layerInput.className = 'form-control';
+    hidden_layerInput.placeholder = 'Enter the number of hidden layer';
+    
+    hidden_unitLabel.innerHTML = 'hidden unit';
+    hidden_unitLabel.className = 'col-sm-10 control-label';
+    hidden_unitInput.className = 'form-control';
+    hidden_unitInput.placeholder = 'Enter the hidden unit(array type:separator={,}) to be applied to each of layer (ex)32,64,32';
+    
+    dropoutLabel.innerHTML = 'dropout';
+    dropoutLabel.className = 'col-sm-10 control-label';
+    dropoutInput.className = 'form-control';
+    dropoutInput.placeholder = 'Enter the dropout(array type:separator={,}) to be applied to each of layer (ex)0.2,0.1,0.3';
+    
+    epochLabel.innerHTML = 'epoch';
+    epochLabel.className = 'col-sm-10 control-label';
+    epochInput.className = 'form-control';
+    epochInput.placeholder = 'epoch';
+    
+    
+    //activation_functionLabel.innerHTML = 'activation_function';
+    //activation_functionLabel.className = 'col-sm-10 control-label';
+    // activation_functionInput.className = 'row';
+    // activation_functionInput.placeholder = 'liner || sigmoid || softmax || softplus || softsign || relu || tanh || hard_sigmoid'; //keras loss function;
+    
+    
+    //loss_functionLabel.innerHTML = 'loss_function';
+    //loss_functionLabel.className = 'col-sm-10 control-label';
+    // loss_functionInput.placeholder = 'categorical_crossentropy || binary_crossentropy || mse || etc.. //keras loss function';
+    
+    //data_dimensionLabel.innerHTML = 'data_dimension';
+    //data_dimensionLabel.className = 'col-sm-10 control-label';
+    //data_dimensionInput.className = 'form-control';
+    //data_dimensionInput.placeholder = 'train data(features) = timesteps * data_dimension // for train_data reshape';
+    
+    //timestepsLabel.innerHTML = 'timesteps';
+    //timestepsLabel.className = 'col-sm-10 control-label';
+    //timestepsInput.className = 'form-control';
+    //timestepsInput.placeholder = 'train data(features) = timesteps * data_dimension // for train_data reshape';
+
+    parent.innerHTML = '';
+    var paramInfo = [
+      new ParameterInformation('label_name', 'string', nameInput, nameLabel),
+      new ParameterInformation('learning_rate', 'string', learning_rateInput, learning_rateLabel),
+      new ParameterInformation('batch_size', 'string', batch_sizeInput, batch_sizeLabel),
+      new ParameterInformation('hidden_layer', 'string', hidden_layerInput, hidden_layerLabel),
+      new ParameterInformation('hidden_unit', 'array[string]', hidden_unitInput, hidden_unitLabel),
+      new ParameterInformation('dropout', 'array[string]', dropoutInput, dropoutLabel),
+      new ParameterInformation('epoch', 'string', epochInput, epochLabel),
+      //new ParameterInformation('timesteps', 'string', timestepsInput, timestepsLabel)
+    ];
+    
+    for (var i = 0; i < paramInfo.length; ++i) {
+      parent.appendChild(paramInfo[i].labelElement);
+      parent.appendChild(paramInfo[i].getNode());
+      parent.appendChild(document.createElement('br'));
+    }
+    return paramInfo;
+  }
+  
+  function mLstmValidate(csvArr, typesArr) {
+    
+    
+  }
+  
+  function mEWS(parent) {
+    var learning_rateLabel = document.createElement('label');
+    var learning_rateInput = document.createElement('input');
+    var hidden_unitLabel = document.createElement('label');
+    var hidden_unitInput = document.createElement('input');
+    var timestepsLabel = document.createElement('label');
+    var timestepsInput = document.createElement('input');
+    
+    learning_rateLabel.innerHTML = 'learning_rate';
+    learning_rateLabel.className = 'col-sm-10 control-label';
+    learning_rateInput.className = 'form-control';
+    learning_rateInput.placeholder = 'Enter the learning rate';
+    
+    hidden_unitLabel.innerHTML = 'hidden_unit';
+    hidden_unitLabel.className = 'col-sm-10 control-label';
+    hidden_unitInput.className = 'form-control';
+    hidden_unitInput.placeholder = 'Enter the hidden unit';
+    
+    timestepsLabel.innerHTML = 'time_steps';
+    timestepsLabel.className = 'col-sm-10 control-label';
+    timestepsInput.className = 'form-control';
+    timestepsInput.placeholder = 'Enter the time_steps';
+
+    parent.innerHTML = '';
+    var paramInfo = [
+      new ParameterInformation('learning_rate', 'string', learning_rateInput, learning_rateLabel),
+      new ParameterInformation('hidden_unit', 'string', hidden_unitInput, hidden_unitLabel),
+      new ParameterInformation('timesteps', 'string', timestepsInput, timestepsLabel)
+    ];
+    
+    for (var i = 0; i < paramInfo.length; ++i) {
+      parent.appendChild(paramInfo[i].labelElement);
+      parent.appendChild(paramInfo[i].getNode());
+      parent.appendChild(document.createElement('br'));
+    }
+    return paramInfo;
+  }
+  
+  function mEWSValidate(csvArr, typesArr) {
+    
+    
+  }
+  
+  var ret = {};
+  ret[commonConst.KNN] = {
+    process: mKnn,
+    validate: mKnnValidate
+  };
+  
+  ret[commonConst.Logistic] = {
+    process: mLogistic,
+    validate: mLogisticValidate
+  };
+  
+  ret[commonConst.RFR] = {
+    process: mRfr,
+    validate: mRfrValidate
+  };
+  
+  ret[commonConst.MLR] = {
+    process: mMlr,
+    validate: mMlrValidate
+  };
+  
+  ret[commonConst.SVR] = {
+    process: mSvr,
+    validate: mSvrValidate
+  };
+  
+  ret[commonConst.K_means] = {
+    process: mKm,
+    validate: mKmValidate
+  };
+  
+  ret[commonConst.ANN] = {
+    process: mLstm,
+    validate: mLstmValidate
+  };
+  
+  ret[commonConst.RNN] = {
+    process: mLstm,
+    validate: mLstmValidate
+  };
+  
+  ret[commonConst.GRU] = {
+    process: mLstm,
+    validate: mLstmValidate
+  };
+  
+  ret[commonConst.LSTM] = {
+    process: mLstm,
+    validate: mLstmValidate
+  };
+  
+  ret[commonConst.Energy_Watt_Service] = {
+    process: mEWS,
+    validate: mEWSValidate
+  }
+  
+  
+  return ret;
+}();
+},{"../js/common-const":1,"jquery":6}],3:[function(require,module,exports){
+module.exports = function() {
+  function _createElement(tagName, id, className) {
+    var ret = document.createElement(tagName);
+    if (id) {
+      ret.id = id;
+    }
+    if (className) {
+      ret.className = className;
+    }
+    return ret; 
+  }
+  
+  return{
+    createElement: _createElement
+  };
+}();
+},{}],4:[function(require,module,exports){
 (function (process,Buffer){
 // Generated by CoffeeScript 1.10.0
 var Parser, StringDecoder, stream, util;
@@ -78,7 +717,7 @@ module.exports = function() {
 };
 
 Parser = function(options) {
-  var base, base1, base10, base11, base12, base13, base14, base15, base2, base3, base4, base5, base6, base7, base8, base9, k, v;
+  var base, base1, base10, base11, base12, base13, base14, base15, base16, base2, base3, base4, base5, base6, base7, base8, base9, k, v;
   if (options == null) {
     options = {};
   }
@@ -137,6 +776,9 @@ Parser = function(options) {
   if ((base15 = this.options).max_limit_on_data_read == null) {
     base15.max_limit_on_data_read = 128000;
   }
+  if ((base16 = this.options).skip_lines_with_empty_values == null) {
+    base16.skip_lines_with_empty_values = false;
+  }
   this.lines = 0;
   this.count = 0;
   this.skipped_line_count = 0;
@@ -154,6 +796,7 @@ Parser = function(options) {
   this.closingQuote = 0;
   this.line = [];
   this.chunks = [];
+  this.rawBuf = '';
   return this;
 };
 
@@ -194,12 +837,18 @@ Parser.prototype._flush = function(callback) {
 };
 
 Parser.prototype.__push = function(line) {
-  var field, i, j, len, lineAsColumns;
+  var field, i, j, len, lineAsColumns, rawBuf, row;
+  if (this.options.skip_lines_with_empty_values && line.join('').trim() === '') {
+    return;
+  }
+  row = null;
   if (this.options.columns === true) {
     this.options.columns = line;
+    rawBuf = '';
     return;
   } else if (typeof this.options.columns === 'function') {
     this.options.columns = this.options.columns(line);
+    rawBuf = '';
     return;
   }
   if (!this.line_length && line.length > 0) {
@@ -222,20 +871,32 @@ Parser.prototype.__push = function(line) {
     lineAsColumns = {};
     for (i = j = 0, len = line.length; j < len; i = ++j) {
       field = line[i];
+      if (this.options.columns[i] === false) {
+        continue;
+      }
       lineAsColumns[this.options.columns[i]] = field;
     }
     if (this.options.objname) {
-      return this.push([lineAsColumns[this.options.objname], lineAsColumns]);
+      row = [lineAsColumns[this.options.objname], lineAsColumns];
     } else {
-      return this.push(lineAsColumns);
+      row = lineAsColumns;
     }
   } else {
-    return this.push(line);
+    row = line;
+  }
+  if (this.options.raw) {
+    this.push({
+      raw: this.rawBuf,
+      row: row
+    });
+    return this.rawBuf = '';
+  } else {
+    return this.push(row);
   }
 };
 
 Parser.prototype.__write = function(chars, end, callback) {
-  var areNextCharsDelimiter, areNextCharsRowDelimiters, auto_parse, char, escapeIsQuote, i, isDelimiter, isEscape, isNextCharAComment, isQuote, isRowDelimiter, is_float, is_int, l, ltrim, nextCharPos, ref, results, rowDelimiter, rowDelimiterLength, rtrim, wasCommenting;
+  var areNextCharsDelimiter, areNextCharsRowDelimiters, auto_parse, char, escapeIsQuote, i, isDelimiter, isEscape, isNextCharAComment, isQuote, isRowDelimiter, is_float, is_int, l, ltrim, nextCharPos, ref, remainingBuffer, results, rowDelimiter, rowDelimiterLength, rtrim, wasCommenting;
   is_int = (function(_this) {
     return function(value) {
       if (typeof _this.is_int === 'function') {
@@ -281,27 +942,15 @@ Parser.prototype.__write = function(chars, end, callback) {
   }
   while (i < l) {
     if (!end) {
-      if (!this.commenting && l - i < this.options.comment.length && this.options.comment.substr(0, l - i) === chars.substr(i, l - i)) {
-        break;
-      }
-      if (this.options.rowDelimiter && l - i < rowDelimiterLength && this.options.rowDelimiter.substr(0, l - i) === chars.substr(i, l - i)) {
-        break;
-      }
-      if (this.options.rowDelimiter && this.quoting && l - i < (this.options.quote.length + rowDelimiterLength) && (this.options.quote + this.options.rowDelimiter).substr(0, l - i) === chars.substr(i, l - i)) {
-        break;
-      }
-      if (l - i <= this.options.delimiter.length && this.options.delimiter.substr(0, l - i) === chars.substr(i, l - i)) {
-        break;
-      }
-      if (l - i <= this.options.escape.length && this.options.escape.substr(0, l - i) === chars.substr(i, l - i)) {
+      remainingBuffer = chars.substr(i, l - i);
+      if ((!this.commenting && l - i < this.options.comment.length && this.options.comment.substr(0, l - i) === remainingBuffer) || (this.options.rowDelimiter && l - i < rowDelimiterLength && this.options.rowDelimiter.substr(0, l - i) === remainingBuffer) || (this.options.rowDelimiter && this.quoting && l - i < (this.options.quote.length + rowDelimiterLength) && (this.options.quote + this.options.rowDelimiter).substr(0, l - i) === remainingBuffer) || (l - i <= this.options.delimiter.length && this.options.delimiter.substr(0, l - i) === remainingBuffer) || (l - i <= this.options.escape.length && this.options.escape.substr(0, l - i) === remainingBuffer)) {
         break;
       }
     }
     char = this.nextChar ? this.nextChar : chars.charAt(i);
-    if (l > i + 1) {
-      this.nextChar = chars.charAt(i + 1);
-    } else {
-      this.nextChar = "";
+    this.nextChar = l > i + 1 ? chars.charAt(i + 1) : '';
+    if (this.options.raw) {
+      this.rawBuf += char;
     }
     if (this.options.rowDelimiter == null) {
       if ((!this.quoting) && (char === '\n' || char === '\r')) {
@@ -310,6 +959,9 @@ Parser.prototype.__write = function(chars, end, callback) {
       } else if (this.nextChar === '\n' || this.nextChar === '\r') {
         rowDelimiter = this.nextChar;
         nextCharPos = i + 2;
+        if (this.raw) {
+          rawBuf += this.nextChar;
+        }
       }
       if (rowDelimiter) {
         if (rowDelimiter === '\r' && chars.charAt(nextCharPos) === '\n') {
@@ -328,6 +980,9 @@ Parser.prototype.__write = function(chars, end, callback) {
         char = this.nextChar;
         this.nextChar = chars.charAt(i + 1);
         this.field += char;
+        if (this.options.raw) {
+          this.rawBuf += char;
+        }
         i++;
         continue;
       }
@@ -458,7 +1113,7 @@ Parser.prototype.__write = function(chars, end, callback) {
 };
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":19,"buffer":11,"stream":30,"string_decoder":31,"util":34}],2:[function(require,module,exports){
+},{"_process":19,"buffer":11,"stream":31,"string_decoder":32,"util":36}],5:[function(require,module,exports){
 /*!
   * domready (c) Dustin Diaz 2014 - License MIT
   */
@@ -490,10 +1145,9 @@ Parser.prototype.__write = function(chars, end, callback) {
 
 });
 
-},{}],3:[function(require,module,exports){
-/*eslint-disable no-unused-vars*/
+},{}],6:[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v3.1.0
+ * jQuery JavaScript Library v3.1.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -503,7 +1157,7 @@ Parser.prototype.__write = function(chars, end, callback) {
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2016-07-07T21:44Z
+ * Date: 2016-09-22T22:30Z
  */
 ( function( global, factory ) {
 
@@ -576,13 +1230,13 @@ var support = {};
 		doc.head.appendChild( script ).parentNode.removeChild( script );
 	}
 /* global Symbol */
-// Defining this global in .eslintrc would create a danger of using the global
+// Defining this global in .eslintrc.json would create a danger of using the global
 // unguarded in another place, it seems safer to define global only for this module
 
 
 
 var
-	version = "3.1.0",
+	version = "3.1.1",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -622,13 +1276,14 @@ jQuery.fn = jQuery.prototype = {
 	// Get the Nth element in the matched element set OR
 	// Get the whole matched element set as a clean array
 	get: function( num ) {
-		return num != null ?
 
-			// Return just the one element from the set
-			( num < 0 ? this[ num + this.length ] : this[ num ] ) :
+		// Return all the elements in a clean array
+		if ( num == null ) {
+			return slice.call( this );
+		}
 
-			// Return all the elements in a clean array
-			slice.call( this );
+		// Return just the one element from the set
+		return num < 0 ? this[ num + this.length ] : this[ num ];
 	},
 
 	// Take an array of elements and push it onto the stack
@@ -1036,14 +1691,14 @@ function isArrayLike( obj ) {
 }
 var Sizzle =
 /*!
- * Sizzle CSS Selector Engine v2.3.0
+ * Sizzle CSS Selector Engine v2.3.3
  * https://sizzlejs.com/
  *
  * Copyright jQuery Foundation and other contributors
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2016-01-04
+ * Date: 2016-08-08
  */
 (function( window ) {
 
@@ -1189,7 +1844,7 @@ var i,
 
 	// CSS string/identifier serialization
 	// https://drafts.csswg.org/cssom/#common-serializing-idioms
-	rcssescape = /([\0-\x1f\x7f]|^-?\d)|^-$|[^\x80-\uFFFF\w-]/g,
+	rcssescape = /([\0-\x1f\x7f]|^-?\d)|^-$|[^\0-\x1f\x7f-\uFFFF\w-]/g,
 	fcssescape = function( ch, asCodePoint ) {
 		if ( asCodePoint ) {
 
@@ -1216,7 +1871,7 @@ var i,
 
 	disabledAncestor = addCombinator(
 		function( elem ) {
-			return elem.disabled === true;
+			return elem.disabled === true && ("form" in elem || "label" in elem);
 		},
 		{ dir: "parentNode", next: "legend" }
 	);
@@ -1502,26 +2157,54 @@ function createButtonPseudo( type ) {
  * @param {Boolean} disabled true for :disabled; false for :enabled
  */
 function createDisabledPseudo( disabled ) {
-	// Known :disabled false positives:
-	// IE: *[disabled]:not(button, input, select, textarea, optgroup, option, menuitem, fieldset)
-	// not IE: fieldset[disabled] > legend:nth-of-type(n+2) :can-disable
+
+	// Known :disabled false positives: fieldset[disabled] > legend:nth-of-type(n+2) :can-disable
 	return function( elem ) {
 
-		// Check form elements and option elements for explicit disabling
-		return "label" in elem && elem.disabled === disabled ||
-			"form" in elem && elem.disabled === disabled ||
+		// Only certain elements can match :enabled or :disabled
+		// https://html.spec.whatwg.org/multipage/scripting.html#selector-enabled
+		// https://html.spec.whatwg.org/multipage/scripting.html#selector-disabled
+		if ( "form" in elem ) {
 
-			// Check non-disabled form elements for fieldset[disabled] ancestors
-			"form" in elem && elem.disabled === false && (
-				// Support: IE6-11+
-				// Ancestry is covered for us
-				elem.isDisabled === disabled ||
+			// Check for inherited disabledness on relevant non-disabled elements:
+			// * listed form-associated elements in a disabled fieldset
+			//   https://html.spec.whatwg.org/multipage/forms.html#category-listed
+			//   https://html.spec.whatwg.org/multipage/forms.html#concept-fe-disabled
+			// * option elements in a disabled optgroup
+			//   https://html.spec.whatwg.org/multipage/forms.html#concept-option-disabled
+			// All such elements have a "form" property.
+			if ( elem.parentNode && elem.disabled === false ) {
 
-				// Otherwise, assume any non-<option> under fieldset[disabled] is disabled
-				/* jshint -W018 */
-				elem.isDisabled !== !disabled &&
-					("label" in elem || !disabledAncestor( elem )) !== disabled
-			);
+				// Option elements defer to a parent optgroup if present
+				if ( "label" in elem ) {
+					if ( "label" in elem.parentNode ) {
+						return elem.parentNode.disabled === disabled;
+					} else {
+						return elem.disabled === disabled;
+					}
+				}
+
+				// Support: IE 6 - 11
+				// Use the isDisabled shortcut property to check for disabled fieldset ancestors
+				return elem.isDisabled === disabled ||
+
+					// Where there is no isDisabled, check manually
+					/* jshint -W018 */
+					elem.isDisabled !== !disabled &&
+						disabledAncestor( elem ) === disabled;
+			}
+
+			return elem.disabled === disabled;
+
+		// Try to winnow out elements that can't be disabled before trusting the disabled property.
+		// Some victims get caught in our net (label, legend, menu, track), but it shouldn't
+		// even exist on them, let alone have a boolean value.
+		} else if ( "label" in elem ) {
+			return elem.disabled === disabled;
+		}
+
+		// Remaining elements are neither :enabled nor :disabled
+		return false;
 	};
 }
 
@@ -1637,25 +2320,21 @@ setDocument = Sizzle.setDocument = function( node ) {
 		return !document.getElementsByName || !document.getElementsByName( expando ).length;
 	});
 
-	// ID find and filter
+	// ID filter and find
 	if ( support.getById ) {
-		Expr.find["ID"] = function( id, context ) {
-			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
-				var m = context.getElementById( id );
-				return m ? [ m ] : [];
-			}
-		};
 		Expr.filter["ID"] = function( id ) {
 			var attrId = id.replace( runescape, funescape );
 			return function( elem ) {
 				return elem.getAttribute("id") === attrId;
 			};
 		};
+		Expr.find["ID"] = function( id, context ) {
+			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
+				var elem = context.getElementById( id );
+				return elem ? [ elem ] : [];
+			}
+		};
 	} else {
-		// Support: IE6/7
-		// getElementById is not reliable as a find shortcut
-		delete Expr.find["ID"];
-
 		Expr.filter["ID"] =  function( id ) {
 			var attrId = id.replace( runescape, funescape );
 			return function( elem ) {
@@ -1663,6 +2342,36 @@ setDocument = Sizzle.setDocument = function( node ) {
 					elem.getAttributeNode("id");
 				return node && node.value === attrId;
 			};
+		};
+
+		// Support: IE 6 - 7 only
+		// getElementById is not reliable as a find shortcut
+		Expr.find["ID"] = function( id, context ) {
+			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
+				var node, i, elems,
+					elem = context.getElementById( id );
+
+				if ( elem ) {
+
+					// Verify the id attribute
+					node = elem.getAttributeNode("id");
+					if ( node && node.value === id ) {
+						return [ elem ];
+					}
+
+					// Fall back on getElementsByName
+					elems = context.getElementsByName( id );
+					i = 0;
+					while ( (elem = elems[i++]) ) {
+						node = elem.getAttributeNode("id");
+						if ( node && node.value === id ) {
+							return [ elem ];
+						}
+					}
+				}
+
+				return [];
+			}
 		};
 	}
 
@@ -2704,6 +3413,7 @@ function addCombinator( matcher, combinator, base ) {
 					return matcher( elem, context, xml );
 				}
 			}
+			return false;
 		} :
 
 		// Check against all ancestor/preceding elements
@@ -2748,6 +3458,7 @@ function addCombinator( matcher, combinator, base ) {
 					}
 				}
 			}
+			return false;
 		};
 }
 
@@ -3110,8 +3821,7 @@ select = Sizzle.select = function( selector, context, results, seed ) {
 		// Reduce context if the leading compound selector is an ID
 		tokens = match[0] = match[0].slice( 0 );
 		if ( tokens.length > 2 && (token = tokens[0]).type === "ID" &&
-				support.getById && context.nodeType === 9 && documentIsHTML &&
-				Expr.relative[ tokens[1].type ] ) {
+				context.nodeType === 9 && documentIsHTML && Expr.relative[ tokens[1].type ] ) {
 
 			context = ( Expr.find["ID"]( token.matches[0].replace(runescape, funescape), context ) || [] )[0];
 			if ( !context ) {
@@ -3293,24 +4003,29 @@ function winnow( elements, qualifier, not ) {
 		return jQuery.grep( elements, function( elem, i ) {
 			return !!qualifier.call( elem, i, elem ) !== not;
 		} );
-
 	}
 
+	// Single element
 	if ( qualifier.nodeType ) {
 		return jQuery.grep( elements, function( elem ) {
 			return ( elem === qualifier ) !== not;
 		} );
-
 	}
 
-	if ( typeof qualifier === "string" ) {
-		if ( risSimple.test( qualifier ) ) {
-			return jQuery.filter( qualifier, elements, not );
-		}
-
-		qualifier = jQuery.filter( qualifier, elements );
+	// Arraylike of elements (jQuery, arguments, Array)
+	if ( typeof qualifier !== "string" ) {
+		return jQuery.grep( elements, function( elem ) {
+			return ( indexOf.call( qualifier, elem ) > -1 ) !== not;
+		} );
 	}
 
+	// Simple selector that can be filtered directly, removing non-Elements
+	if ( risSimple.test( qualifier ) ) {
+		return jQuery.filter( qualifier, elements, not );
+	}
+
+	// Complex selector, compare the two sets, removing non-Elements
+	qualifier = jQuery.filter( qualifier, elements );
 	return jQuery.grep( elements, function( elem ) {
 		return ( indexOf.call( qualifier, elem ) > -1 ) !== not && elem.nodeType === 1;
 	} );
@@ -3323,11 +4038,13 @@ jQuery.filter = function( expr, elems, not ) {
 		expr = ":not(" + expr + ")";
 	}
 
-	return elems.length === 1 && elem.nodeType === 1 ?
-		jQuery.find.matchesSelector( elem, expr ) ? [ elem ] : [] :
-		jQuery.find.matches( expr, jQuery.grep( elems, function( elem ) {
-			return elem.nodeType === 1;
-		} ) );
+	if ( elems.length === 1 && elem.nodeType === 1 ) {
+		return jQuery.find.matchesSelector( elem, expr ) ? [ elem ] : [];
+	}
+
+	return jQuery.find.matches( expr, jQuery.grep( elems, function( elem ) {
+		return elem.nodeType === 1;
+	} ) );
 };
 
 jQuery.fn.extend( {
@@ -3655,14 +4372,14 @@ jQuery.each( {
 		return this.pushStack( matched );
 	};
 } );
-var rnotwhite = ( /\S+/g );
+var rnothtmlwhite = ( /[^\x20\t\r\n\f]+/g );
 
 
 
 // Convert String-formatted options into Object-formatted ones
 function createOptions( options ) {
 	var object = {};
-	jQuery.each( options.match( rnotwhite ) || [], function( _, flag ) {
+	jQuery.each( options.match( rnothtmlwhite ) || [], function( _, flag ) {
 		object[ flag ] = true;
 	} );
 	return object;
@@ -4427,13 +5144,16 @@ var access = function( elems, fn, key, value, chainable, emptyGet, raw ) {
 		}
 	}
 
-	return chainable ?
-		elems :
+	if ( chainable ) {
+		return elems;
+	}
 
-		// Gets
-		bulk ?
-			fn.call( elems ) :
-			len ? fn( elems[ 0 ], key ) : emptyGet;
+	// Gets
+	if ( bulk ) {
+		return fn.call( elems );
+	}
+
+	return len ? fn( elems[ 0 ], key ) : emptyGet;
 };
 var acceptData = function( owner ) {
 
@@ -4570,7 +5290,7 @@ Data.prototype = {
 				// Otherwise, create an array by matching non-whitespace
 				key = key in cache ?
 					[ key ] :
-					( key.match( rnotwhite ) || [] );
+					( key.match( rnothtmlwhite ) || [] );
 			}
 
 			i = key.length;
@@ -4618,6 +5338,31 @@ var dataUser = new Data();
 var rbrace = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,
 	rmultiDash = /[A-Z]/g;
 
+function getData( data ) {
+	if ( data === "true" ) {
+		return true;
+	}
+
+	if ( data === "false" ) {
+		return false;
+	}
+
+	if ( data === "null" ) {
+		return null;
+	}
+
+	// Only convert to a number if it doesn't change the string
+	if ( data === +data + "" ) {
+		return +data;
+	}
+
+	if ( rbrace.test( data ) ) {
+		return JSON.parse( data );
+	}
+
+	return data;
+}
+
 function dataAttr( elem, key, data ) {
 	var name;
 
@@ -4629,14 +5374,7 @@ function dataAttr( elem, key, data ) {
 
 		if ( typeof data === "string" ) {
 			try {
-				data = data === "true" ? true :
-					data === "false" ? false :
-					data === "null" ? null :
-
-					// Only convert to a number if it doesn't change the string
-					+data + "" === data ? +data :
-					rbrace.test( data ) ? JSON.parse( data ) :
-					data;
+				data = getData( data );
 			} catch ( e ) {}
 
 			// Make sure we set the data so it isn't changed later
@@ -5013,7 +5751,7 @@ function getDefaultDisplay( elem ) {
 		return display;
 	}
 
-	temp = doc.body.appendChild( doc.createElement( nodeName ) ),
+	temp = doc.body.appendChild( doc.createElement( nodeName ) );
 	display = jQuery.css( temp, "display" );
 
 	temp.parentNode.removeChild( temp );
@@ -5131,15 +5869,23 @@ function getAll( context, tag ) {
 
 	// Support: IE <=9 - 11 only
 	// Use typeof to avoid zero-argument method invocation on host objects (#15151)
-	var ret = typeof context.getElementsByTagName !== "undefined" ?
-			context.getElementsByTagName( tag || "*" ) :
-			typeof context.querySelectorAll !== "undefined" ?
-				context.querySelectorAll( tag || "*" ) :
-			[];
+	var ret;
 
-	return tag === undefined || tag && jQuery.nodeName( context, tag ) ?
-		jQuery.merge( [ context ], ret ) :
-		ret;
+	if ( typeof context.getElementsByTagName !== "undefined" ) {
+		ret = context.getElementsByTagName( tag || "*" );
+
+	} else if ( typeof context.querySelectorAll !== "undefined" ) {
+		ret = context.querySelectorAll( tag || "*" );
+
+	} else {
+		ret = [];
+	}
+
+	if ( tag === undefined || tag && jQuery.nodeName( context, tag ) ) {
+		return jQuery.merge( [ context ], ret );
+	}
+
+	return ret;
 }
 
 
@@ -5413,7 +6159,7 @@ jQuery.event = {
 		}
 
 		// Handle multiple events separated by a space
-		types = ( types || "" ).match( rnotwhite ) || [ "" ];
+		types = ( types || "" ).match( rnothtmlwhite ) || [ "" ];
 		t = types.length;
 		while ( t-- ) {
 			tmp = rtypenamespace.exec( types[ t ] ) || [];
@@ -5495,7 +6241,7 @@ jQuery.event = {
 		}
 
 		// Once for each type.namespace in types; type may be omitted
-		types = ( types || "" ).match( rnotwhite ) || [ "" ];
+		types = ( types || "" ).match( rnothtmlwhite ) || [ "" ];
 		t = types.length;
 		while ( t-- ) {
 			tmp = rtypenamespace.exec( types[ t ] ) || [];
@@ -5621,51 +6367,58 @@ jQuery.event = {
 	},
 
 	handlers: function( event, handlers ) {
-		var i, matches, sel, handleObj,
+		var i, handleObj, sel, matchedHandlers, matchedSelectors,
 			handlerQueue = [],
 			delegateCount = handlers.delegateCount,
 			cur = event.target;
 
-		// Support: IE <=9
 		// Find delegate handlers
-		// Black-hole SVG <use> instance trees (#13180)
-		//
-		// Support: Firefox <=42
-		// Avoid non-left-click in FF but don't block IE radio events (#3861, gh-2343)
-		if ( delegateCount && cur.nodeType &&
-			( event.type !== "click" || isNaN( event.button ) || event.button < 1 ) ) {
+		if ( delegateCount &&
+
+			// Support: IE <=9
+			// Black-hole SVG <use> instance trees (trac-13180)
+			cur.nodeType &&
+
+			// Support: Firefox <=42
+			// Suppress spec-violating clicks indicating a non-primary pointer button (trac-3861)
+			// https://www.w3.org/TR/DOM-Level-3-Events/#event-type-click
+			// Support: IE 11 only
+			// ...but not arrow key "clicks" of radio inputs, which can have `button` -1 (gh-2343)
+			!( event.type === "click" && event.button >= 1 ) ) {
 
 			for ( ; cur !== this; cur = cur.parentNode || this ) {
 
 				// Don't check non-elements (#13208)
 				// Don't process clicks on disabled elements (#6911, #8165, #11382, #11764)
-				if ( cur.nodeType === 1 && ( cur.disabled !== true || event.type !== "click" ) ) {
-					matches = [];
+				if ( cur.nodeType === 1 && !( event.type === "click" && cur.disabled === true ) ) {
+					matchedHandlers = [];
+					matchedSelectors = {};
 					for ( i = 0; i < delegateCount; i++ ) {
 						handleObj = handlers[ i ];
 
 						// Don't conflict with Object.prototype properties (#13203)
 						sel = handleObj.selector + " ";
 
-						if ( matches[ sel ] === undefined ) {
-							matches[ sel ] = handleObj.needsContext ?
+						if ( matchedSelectors[ sel ] === undefined ) {
+							matchedSelectors[ sel ] = handleObj.needsContext ?
 								jQuery( sel, this ).index( cur ) > -1 :
 								jQuery.find( sel, this, null, [ cur ] ).length;
 						}
-						if ( matches[ sel ] ) {
-							matches.push( handleObj );
+						if ( matchedSelectors[ sel ] ) {
+							matchedHandlers.push( handleObj );
 						}
 					}
-					if ( matches.length ) {
-						handlerQueue.push( { elem: cur, handlers: matches } );
+					if ( matchedHandlers.length ) {
+						handlerQueue.push( { elem: cur, handlers: matchedHandlers } );
 					}
 				}
 			}
 		}
 
 		// Add the remaining (directly-bound) handlers
+		cur = this;
 		if ( delegateCount < handlers.length ) {
-			handlerQueue.push( { elem: this, handlers: handlers.slice( delegateCount ) } );
+			handlerQueue.push( { elem: cur, handlers: handlers.slice( delegateCount ) } );
 		}
 
 		return handlerQueue;
@@ -5899,7 +6652,19 @@ jQuery.each( {
 
 		// Add which for click: 1 === left; 2 === middle; 3 === right
 		if ( !event.which && button !== undefined && rmouseEvent.test( event.type ) ) {
-			return ( button & 1 ? 1 : ( button & 2 ? 3 : ( button & 4 ? 2 : 0 ) ) );
+			if ( button & 1 ) {
+				return 1;
+			}
+
+			if ( button & 2 ) {
+				return 3;
+			}
+
+			if ( button & 4 ) {
+				return 2;
+			}
+
+			return 0;
 		}
 
 		return event.which;
@@ -6655,15 +7420,17 @@ function setPositiveNumber( elem, value, subtract ) {
 }
 
 function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
-	var i = extra === ( isBorderBox ? "border" : "content" ) ?
-
-		// If we already have the right measurement, avoid augmentation
-		4 :
-
-		// Otherwise initialize for horizontal or vertical properties
-		name === "width" ? 1 : 0,
-
+	var i,
 		val = 0;
+
+	// If we already have the right measurement, avoid augmentation
+	if ( extra === ( isBorderBox ? "border" : "content" ) ) {
+		i = 4;
+
+	// Otherwise initialize for horizontal or vertical properties
+	} else {
+		i = name === "width" ? 1 : 0;
+	}
 
 	for ( ; i < 4; i += 2 ) {
 
@@ -7517,7 +8284,7 @@ jQuery.Animation = jQuery.extend( Animation, {
 			callback = props;
 			props = [ "*" ];
 		} else {
-			props = props.match( rnotwhite );
+			props = props.match( rnothtmlwhite );
 		}
 
 		var prop,
@@ -7555,9 +8322,14 @@ jQuery.speed = function( speed, easing, fn ) {
 		opt.duration = 0;
 
 	} else {
-		opt.duration = typeof opt.duration === "number" ?
-			opt.duration : opt.duration in jQuery.fx.speeds ?
-				jQuery.fx.speeds[ opt.duration ] : jQuery.fx.speeds._default;
+		if ( typeof opt.duration !== "number" ) {
+			if ( opt.duration in jQuery.fx.speeds ) {
+				opt.duration = jQuery.fx.speeds[ opt.duration ];
+
+			} else {
+				opt.duration = jQuery.fx.speeds._default;
+			}
+		}
 	}
 
 	// Normalize opt.queue - true/undefined/null -> "fx"
@@ -7907,7 +8679,10 @@ jQuery.extend( {
 	removeAttr: function( elem, value ) {
 		var name,
 			i = 0,
-			attrNames = value && value.match( rnotwhite );
+
+			// Attribute names can contain non-HTML whitespace characters
+			// https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
+			attrNames = value && value.match( rnothtmlwhite );
 
 		if ( attrNames && elem.nodeType === 1 ) {
 			while ( ( name = attrNames[ i++ ] ) ) {
@@ -8014,12 +8789,19 @@ jQuery.extend( {
 				// Use proper attribute retrieval(#12072)
 				var tabindex = jQuery.find.attr( elem, "tabindex" );
 
-				return tabindex ?
-					parseInt( tabindex, 10 ) :
+				if ( tabindex ) {
+					return parseInt( tabindex, 10 );
+				}
+
+				if (
 					rfocusable.test( elem.nodeName ) ||
-						rclickable.test( elem.nodeName ) && elem.href ?
-							0 :
-							-1;
+					rclickable.test( elem.nodeName ) &&
+					elem.href
+				) {
+					return 0;
+				}
+
+				return -1;
 			}
 		}
 	},
@@ -8036,9 +8818,14 @@ jQuery.extend( {
 // on the option
 // The getter ensures a default option is selected
 // when in an optgroup
+// eslint rule "no-unused-expressions" is disabled for this code
+// since it considers such accessions noop
 if ( !support.optSelected ) {
 	jQuery.propHooks.selected = {
 		get: function( elem ) {
+
+			/* eslint no-unused-expressions: "off" */
+
 			var parent = elem.parentNode;
 			if ( parent && parent.parentNode ) {
 				parent.parentNode.selectedIndex;
@@ -8046,6 +8833,9 @@ if ( !support.optSelected ) {
 			return null;
 		},
 		set: function( elem ) {
+
+			/* eslint no-unused-expressions: "off" */
+
 			var parent = elem.parentNode;
 			if ( parent ) {
 				parent.selectedIndex;
@@ -8076,7 +8866,13 @@ jQuery.each( [
 
 
 
-var rclass = /[\t\r\n\f]/g;
+	// Strip and collapse whitespace according to HTML spec
+	// https://html.spec.whatwg.org/multipage/infrastructure.html#strip-and-collapse-whitespace
+	function stripAndCollapse( value ) {
+		var tokens = value.match( rnothtmlwhite ) || [];
+		return tokens.join( " " );
+	}
+
 
 function getClass( elem ) {
 	return elem.getAttribute && elem.getAttribute( "class" ) || "";
@@ -8094,12 +8890,11 @@ jQuery.fn.extend( {
 		}
 
 		if ( typeof value === "string" && value ) {
-			classes = value.match( rnotwhite ) || [];
+			classes = value.match( rnothtmlwhite ) || [];
 
 			while ( ( elem = this[ i++ ] ) ) {
 				curValue = getClass( elem );
-				cur = elem.nodeType === 1 &&
-					( " " + curValue + " " ).replace( rclass, " " );
+				cur = elem.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
 
 				if ( cur ) {
 					j = 0;
@@ -8110,7 +8905,7 @@ jQuery.fn.extend( {
 					}
 
 					// Only assign if different to avoid unneeded rendering.
-					finalValue = jQuery.trim( cur );
+					finalValue = stripAndCollapse( cur );
 					if ( curValue !== finalValue ) {
 						elem.setAttribute( "class", finalValue );
 					}
@@ -8136,14 +8931,13 @@ jQuery.fn.extend( {
 		}
 
 		if ( typeof value === "string" && value ) {
-			classes = value.match( rnotwhite ) || [];
+			classes = value.match( rnothtmlwhite ) || [];
 
 			while ( ( elem = this[ i++ ] ) ) {
 				curValue = getClass( elem );
 
 				// This expression is here for better compressibility (see addClass)
-				cur = elem.nodeType === 1 &&
-					( " " + curValue + " " ).replace( rclass, " " );
+				cur = elem.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
 
 				if ( cur ) {
 					j = 0;
@@ -8156,7 +8950,7 @@ jQuery.fn.extend( {
 					}
 
 					// Only assign if different to avoid unneeded rendering.
-					finalValue = jQuery.trim( cur );
+					finalValue = stripAndCollapse( cur );
 					if ( curValue !== finalValue ) {
 						elem.setAttribute( "class", finalValue );
 					}
@@ -8191,7 +8985,7 @@ jQuery.fn.extend( {
 				// Toggle individual class names
 				i = 0;
 				self = jQuery( this );
-				classNames = value.match( rnotwhite ) || [];
+				classNames = value.match( rnothtmlwhite ) || [];
 
 				while ( ( className = classNames[ i++ ] ) ) {
 
@@ -8234,10 +9028,8 @@ jQuery.fn.extend( {
 		className = " " + selector + " ";
 		while ( ( elem = this[ i++ ] ) ) {
 			if ( elem.nodeType === 1 &&
-				( " " + getClass( elem ) + " " ).replace( rclass, " " )
-					.indexOf( className ) > -1
-			) {
-				return true;
+				( " " + stripAndCollapse( getClass( elem ) ) + " " ).indexOf( className ) > -1 ) {
+					return true;
 			}
 		}
 
@@ -8248,8 +9040,7 @@ jQuery.fn.extend( {
 
 
 
-var rreturn = /\r/g,
-	rspaces = /[\x20\t\r\n\f]+/g;
+var rreturn = /\r/g;
 
 jQuery.fn.extend( {
 	val: function( value ) {
@@ -8270,13 +9061,13 @@ jQuery.fn.extend( {
 
 				ret = elem.value;
 
-				return typeof ret === "string" ?
+				// Handle most common string cases
+				if ( typeof ret === "string" ) {
+					return ret.replace( rreturn, "" );
+				}
 
-					// Handle most common string cases
-					ret.replace( rreturn, "" ) :
-
-					// Handle cases where value is null/undef or number
-					ret == null ? "" : ret;
+				// Handle cases where value is null/undef or number
+				return ret == null ? "" : ret;
 			}
 
 			return;
@@ -8333,20 +9124,24 @@ jQuery.extend( {
 					// option.text throws exceptions (#14686, #14858)
 					// Strip and collapse whitespace
 					// https://html.spec.whatwg.org/#strip-and-collapse-whitespace
-					jQuery.trim( jQuery.text( elem ) ).replace( rspaces, " " );
+					stripAndCollapse( jQuery.text( elem ) );
 			}
 		},
 		select: {
 			get: function( elem ) {
-				var value, option,
+				var value, option, i,
 					options = elem.options,
 					index = elem.selectedIndex,
 					one = elem.type === "select-one",
 					values = one ? null : [],
-					max = one ? index + 1 : options.length,
-					i = index < 0 ?
-						max :
-						one ? index : 0;
+					max = one ? index + 1 : options.length;
+
+				if ( index < 0 ) {
+					i = max;
+
+				} else {
+					i = one ? index : 0;
+				}
 
 				// Loop through all the selected options
 				for ( ; i < max; i++ ) {
@@ -8800,13 +9595,17 @@ jQuery.fn.extend( {
 		.map( function( i, elem ) {
 			var val = jQuery( this ).val();
 
-			return val == null ?
-				null :
-				jQuery.isArray( val ) ?
-					jQuery.map( val, function( val ) {
-						return { name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
-					} ) :
-					{ name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
+			if ( val == null ) {
+				return null;
+			}
+
+			if ( jQuery.isArray( val ) ) {
+				return jQuery.map( val, function( val ) {
+					return { name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
+				} );
+			}
+
+			return { name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
 		} ).get();
 	}
 } );
@@ -8815,7 +9614,7 @@ jQuery.fn.extend( {
 var
 	r20 = /%20/g,
 	rhash = /#.*$/,
-	rts = /([?&])_=[^&]*/,
+	rantiCache = /([?&])_=[^&]*/,
 	rheaders = /^(.*?):[ \t]*([^\r\n]*)$/mg,
 
 	// #7653, #8125, #8152: local protocol detection
@@ -8861,7 +9660,7 @@ function addToPrefiltersOrTransports( structure ) {
 
 		var dataType,
 			i = 0,
-			dataTypes = dataTypeExpression.toLowerCase().match( rnotwhite ) || [];
+			dataTypes = dataTypeExpression.toLowerCase().match( rnothtmlwhite ) || [];
 
 		if ( jQuery.isFunction( func ) ) {
 
@@ -9329,7 +10128,7 @@ jQuery.extend( {
 		s.type = options.method || options.type || s.method || s.type;
 
 		// Extract dataTypes list
-		s.dataTypes = ( s.dataType || "*" ).toLowerCase().match( rnotwhite ) || [ "" ];
+		s.dataTypes = ( s.dataType || "*" ).toLowerCase().match( rnothtmlwhite ) || [ "" ];
 
 		// A cross-domain request is in order when the origin doesn't match the current origin.
 		if ( s.crossDomain == null ) {
@@ -9401,9 +10200,9 @@ jQuery.extend( {
 				delete s.data;
 			}
 
-			// Add anti-cache in uncached url if needed
+			// Add or update anti-cache param if needed
 			if ( s.cache === false ) {
-				cacheURL = cacheURL.replace( rts, "" );
+				cacheURL = cacheURL.replace( rantiCache, "$1" );
 				uncached = ( rquery.test( cacheURL ) ? "&" : "?" ) + "_=" + ( nonce++ ) + uncached;
 			}
 
@@ -10142,7 +10941,7 @@ jQuery.fn.load = function( url, params, callback ) {
 		off = url.indexOf( " " );
 
 	if ( off > -1 ) {
-		selector = jQuery.trim( url.slice( off ) );
+		selector = stripAndCollapse( url.slice( off ) );
 		url = url.slice( 0, off );
 	}
 
@@ -10534,7 +11333,6 @@ if ( typeof define === "function" && define.amd ) {
 
 
 
-
 var
 
 	// Map over jQuery in case of overwrite
@@ -10563,456 +11361,12 @@ if ( !noGlobal ) {
 }
 
 
+
+
+
 return jQuery;
 } );
 
-},{}],4:[function(require,module,exports){
-
-module.exports = function() {
-  return {
-    cmd: {
-      KNN: 'knn',
-      K_means: 'k_means',
-      RBM: 'rbm',
-      RFR: 'rfr',
-      RNN: 'rnn',
-      GRU: 'gru',
-      LSTM: 'lstm'
-      
-      
-    }, 
-    KNN: 'KNN',
-    K_means: 'K_means',
-    RBM: 'RBM',
-    RFR: 'RFR',
-    RNN: 'RNN',
-    GRU: 'GRU',
-    LSTM: 'LSTM'
-  };
-}();
-},{}],5:[function(require,module,exports){
-var $ = require('jquery');
-var commonConst = require('../js/common-const');
-module.exports = function(){
-  
-  
-  function DropdownElement(_name, _values) {
-    this.select = document.createElement('select');
-    this.select.className = 'form-control';
-    var option;
-    for (var i = 0; i < _values.length; ++i) {
-      option = document.createElement('option');
-      option.value = _values[i];
-      option.innerHTML = _values[i];
-      this.select.appendChild(option);
-    }
-    
-    this.getValue = function() {
-      return this.select.value;
-    };
-    
-    this.getNode = function() {
-      return this.select;
-    };
-  }
-  
-  function ParameterInformation(_name, _type, _input, _label, _inputType) {
-    _inputType = _inputType || 'input';
-    this.name = _name;
-    this.type = _type;
-    this.inputElement = _input;
-    this.labelElement = _label;
-    this.inputType = _inputType;
-    
-    this.getValue = function() {
-      if (this.inputType === 'input') {
-        return this.inputElement.value;
-      } else if (this.inputType === 'select') {
-        return this.inputElement.getValue();
-      }
-      return null;
-    };
-    
-    this.getNode = function() {
-      if (this.inputType === 'input') {
-        return this.inputElement;
-      } else if (this.inputType === 'select') {
-        return this.inputElement.getNode();
-      }
-    };
-  }
-  
-  
-  
-  function mKnn(parent) {
-    //k, columns, target      
-    var kLabel = document.createElement('label');
-    var kInput = document.createElement('input');
-    kLabel.innerHTML = 'K';
-    kLabel.className = 'col-sm-1 control-label';
-    kInput.className = 'form-control';
-    kInput.placeholder = 'enter the int K, K shall be abnormal to number of columns';
-    var columnsLabel = document.createElement('label');
-    var columnsInput = document.createElement('input');
-    columnsLabel.innerHTML = 'columns';
-    columnsLabel.className = 'col-sm-1 control-label';
-    columnsInput.className = 'form-control';
-    columnsInput.placeholder = 'enter the column names to use, separator = (,). (ex)sepal_width,sepal_length';
-    var targetLabel = document.createElement('label');
-    var targetInput = document.createElement('input');
-    targetLabel.innerHTML = 'target';
-    targetLabel.className = 'col-sm-1 control-label';
-    targetInput.className = 'form-control';
-    targetInput.placeholder = 'enter the identifier. (ex) species';
-    parent.innerHTML = '';
-    var paramInfo = [
-      new ParameterInformation('k', 'string', kInput, kLabel),
-      new ParameterInformation('columns', 'array[string]', columnsInput, columnsLabel),
-      new ParameterInformation('target', 'string', targetInput, targetLabel),
-    ];
-      // ['k', kInput, kLabel],
-      // ['columns', columnsInput, columnsLabel],
-      // ['target', targetInput, targetLabel]];
-    for (var i = 0; i < paramInfo.length; ++i) {
-      parent.appendChild(paramInfo[i].labelElement);
-      parent.appendChild(paramInfo[i].inputElement);
-      parent.appendChild(document.createElement('br'));
-    }
-    return paramInfo;
-  }
-  
-  function mKnnValidate(csvArr, typesArr) {
-  }
-  
-  function mRbm(parent) {
-    var learningRateLabel = document.createElement('label');  
-    var nIterLabel = document.createElement('label');  
-    var nComponentsLabel = document.createElement('label');
-    var logisticCLabel = document.createElement('label');  
-    var learningRateInput = document.createElement('input');  
-    var nIterInput = document.createElement('input');  
-    var nComponentsInput = document.createElement('input');
-    var logisticCInput = document.createElement('input');  
-    var targetLabel = document.createElement('label');
-    var targetInput = document.createElement('input');
-    
-    learningRateLabel.innerHTML = 'learning rate';
-    learningRateLabel.className = 'col-sm-10 control-label';
-    learningRateInput.className = 'form-control';
-    learningRateInput.placeholder = '0.06';
-    
-    nIterLabel.innerHTML = 'number of interations';
-    nIterLabel.className = 'col-sm-10 control-label';
-    nIterInput.className = 'form-control';
-    nIterInput.placeholder = '20';
-    
-    nComponentsLabel.innerHTML = 'number of components';
-    nComponentsLabel.className = 'col-sm-10 control-label';
-    nComponentsInput.className = 'form-control';
-    nComponentsInput.placeholder = '100';
-    
-    logisticCLabel.innerHTML = 'logistic c';
-    logisticCLabel.className = 'col-sm-10 control-label';
-    logisticCInput.className = 'form-control';
-    logisticCInput.placeholder = '6000.0';
-    
-    targetLabel.innerHTML = 'target';
-    targetLabel.className = 'col-sm-10 control-label';
-    targetInput.className = 'form-control';
-    targetInput.placeholder = '(ex) number';
-    
-    
-    parent.innerHTML = '';
-    var paramInfo = [
-      new ParameterInformation('learning_rate', 'string', learningRateInput, learningRateLabel),
-      new ParameterInformation('n_iter', 'string', nIterInput, nIterLabel),
-      new ParameterInformation('n_components', 'string', nComponentsInput, nComponentsLabel),
-      new ParameterInformation('logistic_c', 'string', logisticCInput, logisticCLabel),
-      new ParameterInformation('target', 'string', targetInput, targetLabel)
-    ];
-    for (var i = 0; i < paramInfo.length; ++i) {
-      parent.appendChild(paramInfo[i].labelElement);
-      // parent.appendChild(paramInfo[i].inputElement);
-      parent.appendChild(paramInfo[i].getNode());
-      parent.appendChild(document.createElement('br'));
-    }
-    return paramInfo;
-  }
-  
-  function mRbmValidate(csvArr, typesArr) {
-  }
-  
-  function mRfr(parent) {
-    var nEstimatorsLabel = document.createElement('label');  
-    var criterionLabel = document.createElement('label');  
-    var randomStateLabel = document.createElement('label');
-    var featuresColLabel = document.createElement('label');  
-    var predictColLabel = document.createElement('label');  
-    var nEstimatorsInput = document.createElement('input');  
-    var criterionInput = document.createElement('input');  
-    var randomStateInput = document.createElement('input');
-    var featuresColInput = document.createElement('input');  
-    var predictColInput = document.createElement('input');  
-    
-    nEstimatorsLabel.innerHTML = 'number of estimators';
-    nEstimatorsLabel.className = 'col-sm-1 control-label';
-    nEstimatorsInput.className = 'form-control';
-    nEstimatorsInput.placeholder = '';
-    
-    criterionLabel.innerHTML = 'criterion';
-    criterionLabel.className = 'col-sm-1 control-label';
-    criterionInput.className = 'form-control';
-    criterionInput.placeHolder = '';
-    
-    randomStateLabel.innerHTML = 'random state';
-    randomStateLabel.className = 'col-sm-1 control-label';
-    randomStateInput.className = 'form-control';
-    randomStateInput.placeHolder = '';
-    
-    featuresColLabel.innerHTML = 'features columns';
-    featuresColLabel.className = 'col-sm-1 control-label';
-    featuresColInput.className = 'form-control';
-    featuresColInput.placeHolder = '';
-    
-    predictColLabel.innerHTML = 'predict column';
-    predictColLabel.className = 'col-sm-1 control-label';
-    predictColInput.className = 'form-control';
-    predictColInput.placeHolder = '';
-    
-    parent.innerHTML = '';
-    var paramInfo = [
-      new ParameterInformation('n_estimators', 'string', nEstimatorsInput, nEstimatorsLabel),
-      new ParameterInformation('criterion', 'string', criterionInput, criterionLabel),
-      new ParameterInformation('random_state', 'string', randomStateInput, randomStateLabel),
-      new ParameterInformation('features', 'array[string]', featuresColInput, featuresColLabel),
-      new ParameterInformation('predict_col', 'string', predictColInput, predictColLabel)
-    ];
-    
-    for (var i = 0; i < paramInfo.length; ++i) {
-      parent.appendChild(paramInfo[i].labelElement);
-      parent.appendChild(paramInfo[i].getNode());
-      parent.appendChild(document.createElement('br'));
-    }
-    return paramInfo;
-  }
-  
-  function mRfrValidate(csvArr, typesArr) {
-    
-    
-  }
-  
-  function mKm(parent) {
-    var kLabel = document.createElement('label');
-    var kInput = document.createElement('input');
-    var randomseedLabel = document.createElement('label');
-    var randomseedInput = document.createElement('input');
-    
-    kLabel.innerHTML = 'K cluster';
-    kLabel.className = 'col-sm-10 control-label';
-    kInput.className = 'form-control';
-    kInput.placeholder = 'number of cluster';
-    
-    randomseedLabel.innerHTML = 'random state';
-    randomseedLabel.className = 'col-sm-10 control-label';
-    randomseedInput.className = 'form-control';
-    randomseedInput.placeHolder = 'for centroid, if you want randomstate input to 0';
-    
-    parent.innerHTML = '';
-    var paramInfo = [
-      new ParameterInformation('k', 'string', kInput, kLabel),
-      new ParameterInformation('random_seed', 'string', randomseedInput, randomseedLabel)
-    ];
-    
-    for (var i = 0; i < paramInfo.length; ++i) {
-      parent.appendChild(paramInfo[i].labelElement);
-      parent.appendChild(paramInfo[i].getNode());
-      parent.appendChild(document.createElement('br'));
-    }
-    return paramInfo;
-  }
-  
-  function mKmValidate(csvArr, typesArr) {
-    
-    
-  }
-  
-  function mLstm(parent) {
-    var nameLabel = document.createElement('label');
-    var nameInput = document.createElement('input');
-    var learning_rateLabel = document.createElement('label');
-    var learning_rateInput = document.createElement('input');
-    var batch_sizeLabel = document.createElement('label');
-    var batch_sizeInput = document.createElement('input');
-    var hidden_layerLabel = document.createElement('label');
-    var hidden_layerInput = document.createElement('input');
-    var hidden_unitLabel = document.createElement('label');
-    var hidden_unitInput = document.createElement('input');
-    var dropoutLabel = document.createElement('label');
-    var dropoutInput = document.createElement('input');
-    var epochLabel = document.createElement('label');
-    var epochInput = document.createElement('input');
-    var activation_functionLabel = document.createElement('label');
-    var actv = ['linear', 'sigmoid', 'softmax', 'softplus', 'softsign', 'relu', 'tanh', 'hard_sigmoid'];
-    var activation_functionInput = new DropdownElement('act', actv);
-    var loss_functionLabel = document.createElement('label');
-    var lf = ['mean_squared_error',
-        'mean_absolute_error',
-        'mean_absolute_percentage_error',
-        'mean_squared_logarithmic_error',
-        'squared_hinge',
-        'hinge',
-        'categorical_crossentropy',
-        'sparse_categorical_crossentropy',
-        'binary_crossentropy',
-        'kullback_leibler_divergence',
-        'poisson',
-        'cosine_proximity'];
-    var loss_functionInput = new DropdownElement('lf', lf);
-    var data_dimensionLabel = document.createElement('label');
-    var data_dimensionInput = document.createElement('input');
-    var timestepsLabel = document.createElement('label');
-    var timestepsInput = document.createElement('input');
-    
-    nameLabel.innerHTML = 'label name';
-    nameLabel.className = 'col-sm-10 control-label';
-    nameInput.className = 'form-control';
-    nameInput.placeholder = 'Enter the label name';
-    
-    learning_rateLabel.innerHTML = 'learning_rate';
-    learning_rateLabel.className = 'col-sm-10 control-label';
-    learning_rateInput.className = 'form-control';
-    learning_rateInput.placeholder = 'Enter the learning rate';
-    
-    batch_sizeLabel.innerHTML = 'batch size';
-    batch_sizeLabel.className = 'col-sm-10 control-label';
-    batch_sizeInput.className = 'form-control';
-    batch_sizeInput.placeholder = 'Enter the batch size';
-    
-    hidden_layerLabel.innerHTML = 'hidden layer';
-    hidden_layerLabel.className = 'col-sm-10 control-label';
-    hidden_layerInput.className = 'form-control';
-    hidden_layerInput.placeholder = 'Enter the number of hidden layer';
-    
-    hidden_unitLabel.innerHTML = 'hidden unit';
-    hidden_unitLabel.className = 'col-sm-10 control-label';
-    hidden_unitInput.className = 'form-control';
-    hidden_unitInput.placeholder = 'Enter the hidden unit(array type:separator={,}) to be applied to each of layer (ex)32,64,32';
-    
-    dropoutLabel.innerHTML = 'dropout';
-    dropoutLabel.className = 'col-sm-10 control-label';
-    dropoutInput.className = 'form-control';
-    dropoutInput.placeholder = 'Enter the dropout(array type:separator={,}) to be applied to each of layer (ex)0.2,0.1,0.3';
-    
-    epochLabel.innerHTML = 'epoch';
-    epochLabel.className = 'col-sm-10 control-label';
-    epochInput.className = 'form-control';
-    epochInput.placeholder = 'epoch';
-    
-    
-    activation_functionLabel.innerHTML = 'activation_function';
-    activation_functionLabel.className = 'col-sm-10 control-label';
-    // activation_functionInput.className = 'row';
-    // activation_functionInput.placeholder = 'liner || sigmoid || softmax || softplus || softsign || relu || tanh || hard_sigmoid'; //keras loss function;
-    
-    
-    loss_functionLabel.innerHTML = 'loss_function';
-    loss_functionLabel.className = 'col-sm-10 control-label';
-    // loss_functionInput.placeholder = 'categorical_crossentropy || binary_crossentropy || mse || etc.. //keras loss function';
-    
-    data_dimensionLabel.innerHTML = 'data_dimension';
-    data_dimensionLabel.className = 'col-sm-10 control-label';
-    data_dimensionInput.className = 'form-control';
-    data_dimensionInput.placeholder = 'train data(features) = timesteps * data_dimension // for train_data reshape';
-    
-    timestepsLabel.innerHTML = 'timesteps';
-    timestepsLabel.className = 'col-sm-10 control-label';
-    timestepsInput.className = 'form-control';
-    timestepsInput.placeholder = 'train data(features) = timesteps * data_dimension // for train_data reshape';
-
-    parent.innerHTML = '';
-    var paramInfo = [
-      new ParameterInformation('label_name', 'string', nameInput, nameLabel),
-      new ParameterInformation('learning_rate', 'string', learning_rateInput, learning_rateLabel),
-      new ParameterInformation('batch_size', 'string', batch_sizeInput, batch_sizeLabel),
-      new ParameterInformation('hidden_layer', 'string', hidden_layerInput, hidden_layerLabel),
-      new ParameterInformation('hidden_unit', 'array[string]', hidden_unitInput, hidden_unitLabel),
-      new ParameterInformation('dropout', 'array[string]', dropoutInput, dropoutLabel),
-      new ParameterInformation('epoch', 'string', epochInput, epochLabel),
-      new ParameterInformation('activation_function', 'string', activation_functionInput, activation_functionLabel, 'select'),
-      new ParameterInformation('loss_function', 'string', loss_functionInput, loss_functionLabel, 'select'),
-      new ParameterInformation('data_dimension', 'string', data_dimensionInput, data_dimensionLabel),
-      new ParameterInformation('timesteps', 'string', timestepsInput, timestepsLabel)
-    ];
-    
-    for (var i = 0; i < paramInfo.length; ++i) {
-      parent.appendChild(paramInfo[i].labelElement);
-      parent.appendChild(paramInfo[i].getNode());
-      parent.appendChild(document.createElement('br'));
-    }
-    return paramInfo;
-  }
-  
-  function mLstmValidate(csvArr, typesArr) {
-    
-    
-  }
-  
-  var ret = {};
-  ret[commonConst.KNN] = {
-    process: mKnn,
-    validate: mKnnValidate
-  };
-  
-  ret[commonConst.RBM] = {
-    process: mRbm,
-    validate: mRbmValidate
-  };
-  
-  ret[commonConst.RFR] = {
-    process: mRfr,
-    validate: mRfrValidate
-  };
-  
-  ret[commonConst.K_means] = {
-    process: mKm,
-    validate: mKmValidate
-  };
-  
-  ret[commonConst.LSTM] = {
-    process: mLstm,
-    validate: mLstmValidate
-  };
-  
-  ret[commonConst.GRU] = {
-    process: mLstm,
-    validate: mLstmValidate
-  };
-  
-  ret[commonConst.RNN] = {
-    process: mLstm,
-    validate: mLstmValidate
-  };
-  
-  
-  return ret;
-}();
-},{"../js/common-const":4,"jquery":3}],6:[function(require,module,exports){
-module.exports = function() {
-  function _createElement(tagName, id, className) {
-    var ret = document.createElement(tagName);
-    if (id) {
-      ret.id = id;
-    }
-    if (className) {
-      ret.className = className;
-    }
-    return ret; 
-  }
-  
-  return{
-    createElement: _createElement
-  };
-}();
 },{}],7:[function(require,module,exports){
 var $ = require('jquery');
 var domready = require('domready');
@@ -11104,6 +11458,8 @@ domready(function() {
       // reqData.columns = {};
       reqData.apiKey = apiKey;
       reqData.method = method;
+      reqData.model = $('#model-key').html();
+      console.log(reqData.model);
       // reqData.columns.x = {value:$('#xselect').val(), type:$('#xtype').val()};
       // reqData.columns.y = {value:$('#yselect').val(), type:$('#ytype').val()};
       // reqData.columns.label = {value:$('#labelselect').val(), type:$('#labeltype').val()};
@@ -11114,6 +11470,7 @@ domready(function() {
       var formData = new FormData(); 
       formData.append('apiKey', JSON.stringify(apiKey));
       formData.append('method', JSON.stringify(method));
+      formData.append('model', JSON.stringify($('#model-key').html()));
       formData.append('csv', $('#file')[0].files[0]);
       $.ajax({
         url: '/test',
@@ -11238,9 +11595,10 @@ domready(function() {
     });  
   }
 });
-},{"../js/form-maker":5,"../js/zgDOM":6,"csv-parse":1,"domready":2,"jquery":3}],8:[function(require,module,exports){
+},{"../js/form-maker":2,"../js/zgDOM":3,"csv-parse":4,"domready":5,"jquery":6}],8:[function(require,module,exports){
 'use strict'
 
+exports.byteLength = byteLength
 exports.toByteArray = toByteArray
 exports.fromByteArray = fromByteArray
 
@@ -11248,23 +11606,17 @@ var lookup = []
 var revLookup = []
 var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
 
-function init () {
-  var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-  for (var i = 0, len = code.length; i < len; ++i) {
-    lookup[i] = code[i]
-    revLookup[code.charCodeAt(i)] = i
-  }
-
-  revLookup['-'.charCodeAt(0)] = 62
-  revLookup['_'.charCodeAt(0)] = 63
+var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+for (var i = 0, len = code.length; i < len; ++i) {
+  lookup[i] = code[i]
+  revLookup[code.charCodeAt(i)] = i
 }
 
-init()
+revLookup['-'.charCodeAt(0)] = 62
+revLookup['_'.charCodeAt(0)] = 63
 
-function toByteArray (b64) {
-  var i, j, l, tmp, placeHolders, arr
+function placeHoldersCount (b64) {
   var len = b64.length
-
   if (len % 4 > 0) {
     throw new Error('Invalid string. Length must be a multiple of 4')
   }
@@ -11274,9 +11626,19 @@ function toByteArray (b64) {
   // represent one byte
   // if there is only one, then the three characters before it represent 2 bytes
   // this is just a cheap hack to not do indexOf twice
-  placeHolders = b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
+  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
+}
 
+function byteLength (b64) {
   // base64 is 4/3 + up to two characters of the original data
+  return b64.length * 3 / 4 - placeHoldersCount(b64)
+}
+
+function toByteArray (b64) {
+  var i, j, l, tmp, placeHolders, arr
+  var len = b64.length
+  placeHolders = placeHoldersCount(b64)
+
   arr = new Arr(len * 3 / 4 - placeHolders)
 
   // if there are placeholders, only get up to the last complete 4 chars
@@ -11632,6 +11994,8 @@ if (Buffer.TYPED_ARRAY_SUPPORT) {
 function assertSize (size) {
   if (typeof size !== 'number') {
     throw new TypeError('"size" argument must be a number')
+  } else if (size < 0) {
+    throw new RangeError('"size" argument must not be negative')
   }
 }
 
@@ -11695,12 +12059,20 @@ function fromString (that, string, encoding) {
   var length = byteLength(string, encoding) | 0
   that = createBuffer(that, length)
 
-  that.write(string, encoding)
+  var actual = that.write(string, encoding)
+
+  if (actual !== length) {
+    // Writing a hex string, for example, that contains invalid characters will
+    // cause everything after the first invalid character to be ignored. (e.g.
+    // 'abxxcd' will be treated as 'ab')
+    that = that.slice(0, actual)
+  }
+
   return that
 }
 
 function fromArrayLike (that, array) {
-  var length = checked(array.length) | 0
+  var length = array.length < 0 ? 0 : checked(array.length) | 0
   that = createBuffer(that, length)
   for (var i = 0; i < length; i += 1) {
     that[i] = array[i] & 255
@@ -11769,7 +12141,7 @@ function fromObject (that, obj) {
 }
 
 function checked (length) {
-  // Note: cannot use `length < kMaxLength` here because that fails when
+  // Note: cannot use `length < kMaxLength()` here because that fails when
   // length is NaN (which is otherwise coerced to zero.)
   if (length >= kMaxLength()) {
     throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
@@ -11818,9 +12190,9 @@ Buffer.isEncoding = function isEncoding (encoding) {
     case 'utf8':
     case 'utf-8':
     case 'ascii':
+    case 'latin1':
     case 'binary':
     case 'base64':
-    case 'raw':
     case 'ucs2':
     case 'ucs-2':
     case 'utf16le':
@@ -11881,9 +12253,8 @@ function byteLength (string, encoding) {
   for (;;) {
     switch (encoding) {
       case 'ascii':
+      case 'latin1':
       case 'binary':
-      case 'raw':
-      case 'raws':
         return len
       case 'utf8':
       case 'utf-8':
@@ -11956,8 +12327,9 @@ function slowToString (encoding, start, end) {
       case 'ascii':
         return asciiSlice(this, start, end)
 
+      case 'latin1':
       case 'binary':
-        return binarySlice(this, start, end)
+        return latin1Slice(this, start, end)
 
       case 'base64':
         return base64Slice(this, start, end)
@@ -12005,6 +12377,20 @@ Buffer.prototype.swap32 = function swap32 () {
   for (var i = 0; i < len; i += 4) {
     swap(this, i, i + 3)
     swap(this, i + 1, i + 2)
+  }
+  return this
+}
+
+Buffer.prototype.swap64 = function swap64 () {
+  var len = this.length
+  if (len % 8 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 64-bits')
+  }
+  for (var i = 0; i < len; i += 8) {
+    swap(this, i, i + 7)
+    swap(this, i + 1, i + 6)
+    swap(this, i + 2, i + 5)
+    swap(this, i + 3, i + 4)
   }
   return this
 }
@@ -12091,7 +12477,73 @@ Buffer.prototype.compare = function compare (target, start, end, thisStart, this
   return 0
 }
 
-function arrayIndexOf (arr, val, byteOffset, encoding) {
+// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
+// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
+//
+// Arguments:
+// - buffer - a Buffer to search
+// - val - a string, Buffer, or number
+// - byteOffset - an index into `buffer`; will be clamped to an int32
+// - encoding - an optional encoding, relevant is val is a string
+// - dir - true for indexOf, false for lastIndexOf
+function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
+  // Empty buffer means no match
+  if (buffer.length === 0) return -1
+
+  // Normalize byteOffset
+  if (typeof byteOffset === 'string') {
+    encoding = byteOffset
+    byteOffset = 0
+  } else if (byteOffset > 0x7fffffff) {
+    byteOffset = 0x7fffffff
+  } else if (byteOffset < -0x80000000) {
+    byteOffset = -0x80000000
+  }
+  byteOffset = +byteOffset  // Coerce to Number.
+  if (isNaN(byteOffset)) {
+    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
+    byteOffset = dir ? 0 : (buffer.length - 1)
+  }
+
+  // Normalize byteOffset: negative offsets start from the end of the buffer
+  if (byteOffset < 0) byteOffset = buffer.length + byteOffset
+  if (byteOffset >= buffer.length) {
+    if (dir) return -1
+    else byteOffset = buffer.length - 1
+  } else if (byteOffset < 0) {
+    if (dir) byteOffset = 0
+    else return -1
+  }
+
+  // Normalize val
+  if (typeof val === 'string') {
+    val = Buffer.from(val, encoding)
+  }
+
+  // Finally, search either indexOf (if dir is true) or lastIndexOf
+  if (Buffer.isBuffer(val)) {
+    // Special case: looking for empty string/buffer always fails
+    if (val.length === 0) {
+      return -1
+    }
+    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
+  } else if (typeof val === 'number') {
+    val = val & 0xFF // Search for a byte value [0-255]
+    if (Buffer.TYPED_ARRAY_SUPPORT &&
+        typeof Uint8Array.prototype.indexOf === 'function') {
+      if (dir) {
+        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
+      } else {
+        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
+      }
+    }
+    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
+  }
+
+  throw new TypeError('val must be string, number or Buffer')
+}
+
+function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
   var indexSize = 1
   var arrLength = arr.length
   var valLength = val.length
@@ -12118,60 +12570,45 @@ function arrayIndexOf (arr, val, byteOffset, encoding) {
     }
   }
 
-  var foundIndex = -1
-  for (var i = byteOffset; i < arrLength; ++i) {
-    if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
-      if (foundIndex === -1) foundIndex = i
-      if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
-    } else {
-      if (foundIndex !== -1) i -= i - foundIndex
-      foundIndex = -1
+  var i
+  if (dir) {
+    var foundIndex = -1
+    for (i = byteOffset; i < arrLength; i++) {
+      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+        if (foundIndex === -1) foundIndex = i
+        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
+      } else {
+        if (foundIndex !== -1) i -= i - foundIndex
+        foundIndex = -1
+      }
+    }
+  } else {
+    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength
+    for (i = byteOffset; i >= 0; i--) {
+      var found = true
+      for (var j = 0; j < valLength; j++) {
+        if (read(arr, i + j) !== read(val, j)) {
+          found = false
+          break
+        }
+      }
+      if (found) return i
     }
   }
 
   return -1
 }
 
-Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
-  if (typeof byteOffset === 'string') {
-    encoding = byteOffset
-    byteOffset = 0
-  } else if (byteOffset > 0x7fffffff) {
-    byteOffset = 0x7fffffff
-  } else if (byteOffset < -0x80000000) {
-    byteOffset = -0x80000000
-  }
-  byteOffset >>= 0
-
-  if (this.length === 0) return -1
-  if (byteOffset >= this.length) return -1
-
-  // Negative offsets start from the end of the buffer
-  if (byteOffset < 0) byteOffset = Math.max(this.length + byteOffset, 0)
-
-  if (typeof val === 'string') {
-    val = Buffer.from(val, encoding)
-  }
-
-  if (Buffer.isBuffer(val)) {
-    // special case: looking for empty string/buffer always fails
-    if (val.length === 0) {
-      return -1
-    }
-    return arrayIndexOf(this, val, byteOffset, encoding)
-  }
-  if (typeof val === 'number') {
-    if (Buffer.TYPED_ARRAY_SUPPORT && Uint8Array.prototype.indexOf === 'function') {
-      return Uint8Array.prototype.indexOf.call(this, val, byteOffset)
-    }
-    return arrayIndexOf(this, [ val ], byteOffset, encoding)
-  }
-
-  throw new TypeError('val must be string, number or Buffer')
-}
-
 Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
   return this.indexOf(val, byteOffset, encoding) !== -1
+}
+
+Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
+}
+
+Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
 }
 
 function hexWrite (buf, string, offset, length) {
@@ -12188,7 +12625,7 @@ function hexWrite (buf, string, offset, length) {
 
   // must be an even number of digits
   var strLen = string.length
-  if (strLen % 2 !== 0) throw new Error('Invalid hex string')
+  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
 
   if (length > strLen / 2) {
     length = strLen / 2
@@ -12209,7 +12646,7 @@ function asciiWrite (buf, string, offset, length) {
   return blitBuffer(asciiToBytes(string), buf, offset, length)
 }
 
-function binaryWrite (buf, string, offset, length) {
+function latin1Write (buf, string, offset, length) {
   return asciiWrite(buf, string, offset, length)
 }
 
@@ -12271,8 +12708,9 @@ Buffer.prototype.write = function write (string, offset, length, encoding) {
       case 'ascii':
         return asciiWrite(this, string, offset, length)
 
+      case 'latin1':
       case 'binary':
-        return binaryWrite(this, string, offset, length)
+        return latin1Write(this, string, offset, length)
 
       case 'base64':
         // Warning: maxLength not taken into account in base64Write
@@ -12413,7 +12851,7 @@ function asciiSlice (buf, start, end) {
   return ret
 }
 
-function binarySlice (buf, start, end) {
+function latin1Slice (buf, start, end) {
   var ret = ''
   end = Math.min(buf.length, end)
 
@@ -13707,22 +14145,26 @@ if (typeof Object.create === 'function') {
 }
 
 },{}],16:[function(require,module,exports){
-/**
- * Determine if an object is Buffer
+/*!
+ * Determine if an object is a Buffer
  *
- * Author:   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * License:  MIT
- *
- * `npm install is-buffer`
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
  */
 
+// The _isBuffer check is for Safari 5-7 support, because it's missing
+// Object.prototype.constructor. Remove this eventually
 module.exports = function (obj) {
-  return !!(obj != null &&
-    (obj._isBuffer || // For Safari 5-7 (missing Object.prototype.constructor)
-      (obj.constructor &&
-      typeof obj.constructor.isBuffer === 'function' &&
-      obj.constructor.isBuffer(obj))
-    ))
+  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
+}
+
+function isBuffer (obj) {
+  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
+}
+
+// For Node v0.10 support. Remove this eventually.
+function isSlowBuffer (obj) {
+  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
 },{}],17:[function(require,module,exports){
@@ -13781,7 +14223,6 @@ function nextTick(fn, arg1, arg2, arg3) {
 }).call(this,require('_process'))
 },{"_process":19}],19:[function(require,module,exports){
 // shim for using process in browser
-
 var process = module.exports = {};
 
 // cached from whatever global is present so that test runners that stub it
@@ -13792,22 +14233,84 @@ var process = module.exports = {};
 var cachedSetTimeout;
 var cachedClearTimeout;
 
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
 (function () {
-  try {
-    cachedSetTimeout = setTimeout;
-  } catch (e) {
-    cachedSetTimeout = function () {
-      throw new Error('setTimeout is not defined');
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
     }
-  }
-  try {
-    cachedClearTimeout = clearTimeout;
-  } catch (e) {
-    cachedClearTimeout = function () {
-      throw new Error('clearTimeout is not defined');
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
     }
-  }
 } ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
 var queue = [];
 var draining = false;
 var currentQueue;
@@ -13832,7 +14335,7 @@ function drainQueue() {
     if (draining) {
         return;
     }
-    var timeout = cachedSetTimeout(cleanUpNextTick);
+    var timeout = runTimeout(cleanUpNextTick);
     draining = true;
 
     var len = queue.length;
@@ -13849,7 +14352,7 @@ function drainQueue() {
     }
     currentQueue = null;
     draining = false;
-    cachedClearTimeout(timeout);
+    runClearTimeout(timeout);
 }
 
 process.nextTick = function (fun) {
@@ -13861,7 +14364,7 @@ process.nextTick = function (fun) {
     }
     queue.push(new Item(fun, args));
     if (queue.length === 1 && !draining) {
-        cachedSetTimeout(drainQueue, 0);
+        runTimeout(drainQueue);
     }
 };
 
@@ -14020,6 +14523,10 @@ var processNextTick = require('process-nextick-args');
 var isArray = require('isarray');
 /*</replacement>*/
 
+/*<replacement>*/
+var Duplex;
+/*</replacement>*/
+
 Readable.ReadableState = ReadableState;
 
 /*<replacement>*/
@@ -14061,24 +14568,25 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
+var BufferList = require('./internal/streams/BufferList');
 var StringDecoder;
 
 util.inherits(Readable, Stream);
 
-var hasPrependListener = typeof EE.prototype.prependListener === 'function';
-
 function prependListener(emitter, event, fn) {
-  if (hasPrependListener) return emitter.prependListener(event, fn);
-
-  // This is a brutally ugly hack to make sure that our error handler
-  // is attached before any userland ones.  NEVER DO THIS. This is here
-  // only because this code needs to continue to work with older versions
-  // of Node.js that do not include the prependListener() method. The goal
-  // is to eventually remove this hack.
-  if (!emitter._events || !emitter._events[event]) emitter.on(event, fn);else if (isArray(emitter._events[event])) emitter._events[event].unshift(fn);else emitter._events[event] = [fn, emitter._events[event]];
+  // Sadly this is not cacheable as some libraries bundle their own
+  // event emitter implementation with them.
+  if (typeof emitter.prependListener === 'function') {
+    return emitter.prependListener(event, fn);
+  } else {
+    // This is a hack to make sure that our error handler is attached before any
+    // userland ones.  NEVER DO THIS. This is here only because this code needs
+    // to continue to work with older versions of Node.js that do not include
+    // the prependListener() method. The goal is to eventually remove this hack.
+    if (!emitter._events || !emitter._events[event]) emitter.on(event, fn);else if (isArray(emitter._events[event])) emitter._events[event].unshift(fn);else emitter._events[event] = [fn, emitter._events[event]];
+  }
 }
 
-var Duplex;
 function ReadableState(options, stream) {
   Duplex = Duplex || require('./_stream_duplex');
 
@@ -14099,7 +14607,10 @@ function ReadableState(options, stream) {
   // cast to ints.
   this.highWaterMark = ~ ~this.highWaterMark;
 
-  this.buffer = [];
+  // A linked list is used to store data chunks instead of an array because the
+  // linked list can remove elements from the beginning faster than
+  // array.shift()
+  this.buffer = new BufferList();
   this.length = 0;
   this.pipes = null;
   this.pipesCount = 0;
@@ -14145,7 +14656,6 @@ function ReadableState(options, stream) {
   }
 }
 
-var Duplex;
 function Readable(options) {
   Duplex = Duplex || require('./_stream_duplex');
 
@@ -14262,7 +14772,8 @@ function computeNewHighWaterMark(n) {
   if (n >= MAX_HWM) {
     n = MAX_HWM;
   } else {
-    // Get the next highest power of 2
+    // Get the next highest power of 2 to prevent increasing hwm excessively in
+    // tiny amounts
     n--;
     n |= n >>> 1;
     n |= n >>> 2;
@@ -14274,44 +14785,34 @@ function computeNewHighWaterMark(n) {
   return n;
 }
 
+// This function is designed to be inlinable, so please take care when making
+// changes to the function body.
 function howMuchToRead(n, state) {
-  if (state.length === 0 && state.ended) return 0;
-
-  if (state.objectMode) return n === 0 ? 0 : 1;
-
-  if (n === null || isNaN(n)) {
-    // only flow one buffer at a time
-    if (state.flowing && state.buffer.length) return state.buffer[0].length;else return state.length;
+  if (n <= 0 || state.length === 0 && state.ended) return 0;
+  if (state.objectMode) return 1;
+  if (n !== n) {
+    // Only flow one buffer at a time
+    if (state.flowing && state.length) return state.buffer.head.data.length;else return state.length;
   }
-
-  if (n <= 0) return 0;
-
-  // If we're asking for more than the target buffer level,
-  // then raise the water mark.  Bump up to the next highest
-  // power of 2, to prevent increasing it excessively in tiny
-  // amounts.
+  // If we're asking for more than the current hwm, then raise the hwm.
   if (n > state.highWaterMark) state.highWaterMark = computeNewHighWaterMark(n);
-
-  // don't have that much.  return null, unless we've ended.
-  if (n > state.length) {
-    if (!state.ended) {
-      state.needReadable = true;
-      return 0;
-    } else {
-      return state.length;
-    }
+  if (n <= state.length) return n;
+  // Don't have enough
+  if (!state.ended) {
+    state.needReadable = true;
+    return 0;
   }
-
-  return n;
+  return state.length;
 }
 
 // you can override either this method, or the async _read(n) below.
 Readable.prototype.read = function (n) {
   debug('read', n);
+  n = parseInt(n, 10);
   var state = this._readableState;
   var nOrig = n;
 
-  if (typeof n !== 'number' || n > 0) state.emittedReadable = false;
+  if (n !== 0) state.emittedReadable = false;
 
   // if we're doing read(0) to trigger a readable event, but we
   // already have a bunch of data in the buffer, then just trigger
@@ -14367,9 +14868,7 @@ Readable.prototype.read = function (n) {
   if (state.ended || state.reading) {
     doRead = false;
     debug('reading or ended', doRead);
-  }
-
-  if (doRead) {
+  } else if (doRead) {
     debug('do read');
     state.reading = true;
     state.sync = true;
@@ -14378,11 +14877,10 @@ Readable.prototype.read = function (n) {
     // call internal read method
     this._read(state.highWaterMark);
     state.sync = false;
+    // If _read pushed data synchronously, then `reading` will be false,
+    // and we need to re-evaluate how much data we can return to the user.
+    if (!state.reading) n = howMuchToRead(nOrig, state);
   }
-
-  // If _read pushed data synchronously, then `reading` will be false,
-  // and we need to re-evaluate how much data we can return to the user.
-  if (doRead && !state.reading) n = howMuchToRead(nOrig, state);
 
   var ret;
   if (n > 0) ret = fromList(n, state);else ret = null;
@@ -14390,16 +14888,18 @@ Readable.prototype.read = function (n) {
   if (ret === null) {
     state.needReadable = true;
     n = 0;
+  } else {
+    state.length -= n;
   }
 
-  state.length -= n;
+  if (state.length === 0) {
+    // If we have nothing in the buffer, then we want to know
+    // as soon as we *do* get something into the buffer.
+    if (!state.ended) state.needReadable = true;
 
-  // If we have nothing in the buffer, then we want to know
-  // as soon as we *do* get something into the buffer.
-  if (state.length === 0 && !state.ended) state.needReadable = true;
-
-  // If we tried to read() past the EOF, then emit end on the next tick.
-  if (nOrig !== n && state.ended && state.length === 0) endReadable(this);
+    // If we tried to read() past the EOF, then emit end on the next tick.
+    if (nOrig !== n && state.ended) endReadable(this);
+  }
 
   if (ret !== null) this.emit('data', ret);
 
@@ -14478,7 +14978,7 @@ function maybeReadMore_(stream, state) {
 // for virtual (non-string, non-buffer) streams, "length" is somewhat
 // arbitrary, and perhaps not very meaningful.
 Readable.prototype._read = function (n) {
-  this.emit('error', new Error('not implemented'));
+  this.emit('error', new Error('_read() is not implemented'));
 };
 
 Readable.prototype.pipe = function (dest, pipeOpts) {
@@ -14547,11 +15047,17 @@ Readable.prototype.pipe = function (dest, pipeOpts) {
     if (state.awaitDrain && (!dest._writableState || dest._writableState.needDrain)) ondrain();
   }
 
+  // If the user pushes more data while we're writing to dest then we'll end up
+  // in ondata again. However, we only want to increase awaitDrain once because
+  // dest will only emit one 'drain' event for the multiple writes.
+  // => Introduce a guard on increasing awaitDrain.
+  var increasedAwaitDrain = false;
   src.on('data', ondata);
   function ondata(chunk) {
     debug('ondata');
+    increasedAwaitDrain = false;
     var ret = dest.write(chunk);
-    if (false === ret) {
+    if (false === ret && !increasedAwaitDrain) {
       // If the user unpiped during `dest.write()`, it is possible
       // to get stuck in a permanently paused state if that write
       // also returned false.
@@ -14559,6 +15065,7 @@ Readable.prototype.pipe = function (dest, pipeOpts) {
       if ((state.pipesCount === 1 && state.pipes === dest || state.pipesCount > 1 && indexOf(state.pipes, dest) !== -1) && !cleanedUp) {
         debug('false write response, pause', src._readableState.awaitDrain);
         src._readableState.awaitDrain++;
+        increasedAwaitDrain = true;
       }
       src.pause();
     }
@@ -14649,16 +15156,16 @@ Readable.prototype.unpipe = function (dest) {
     state.pipesCount = 0;
     state.flowing = false;
 
-    for (var _i = 0; _i < len; _i++) {
-      dests[_i].emit('unpipe', this);
+    for (var i = 0; i < len; i++) {
+      dests[i].emit('unpipe', this);
     }return this;
   }
 
   // try to find the right one.
-  var i = indexOf(state.pipes, dest);
-  if (i === -1) return this;
+  var index = indexOf(state.pipes, dest);
+  if (index === -1) return this;
 
-  state.pipes.splice(i, 1);
+  state.pipes.splice(index, 1);
   state.pipesCount -= 1;
   if (state.pipesCount === 1) state.pipes = state.pipes[0];
 
@@ -14672,18 +15179,14 @@ Readable.prototype.unpipe = function (dest) {
 Readable.prototype.on = function (ev, fn) {
   var res = Stream.prototype.on.call(this, ev, fn);
 
-  // If listening to data, and it has not explicitly been paused,
-  // then call resume to start the flow of data on the next tick.
-  if (ev === 'data' && false !== this._readableState.flowing) {
-    this.resume();
-  }
-
-  if (ev === 'readable' && !this._readableState.endEmitted) {
+  if (ev === 'data') {
+    // Start flowing on next tick if stream isn't explicitly paused
+    if (this._readableState.flowing !== false) this.resume();
+  } else if (ev === 'readable') {
     var state = this._readableState;
-    if (!state.readableListening) {
-      state.readableListening = true;
+    if (!state.endEmitted && !state.readableListening) {
+      state.readableListening = state.needReadable = true;
       state.emittedReadable = false;
-      state.needReadable = true;
       if (!state.reading) {
         processNextTick(nReadingNextTick, this);
       } else if (state.length) {
@@ -14727,6 +15230,7 @@ function resume_(stream, state) {
   }
 
   state.resumeScheduled = false;
+  state.awaitDrain = 0;
   stream.emit('resume');
   flow(stream);
   if (state.flowing && !state.reading) stream.read(0);
@@ -14745,11 +15249,7 @@ Readable.prototype.pause = function () {
 function flow(stream) {
   var state = stream._readableState;
   debug('flow', state.flowing);
-  if (state.flowing) {
-    do {
-      var chunk = stream.read();
-    } while (null !== chunk && state.flowing);
-  }
+  while (state.flowing && stream.read() !== null) {}
 }
 
 // wrap an old-style stream as the async data source.
@@ -14820,50 +15320,101 @@ Readable._fromList = fromList;
 
 // Pluck off n bytes from an array of buffers.
 // Length is the combined lengths of all the buffers in the list.
+// This function is designed to be inlinable, so please take care when making
+// changes to the function body.
 function fromList(n, state) {
-  var list = state.buffer;
-  var length = state.length;
-  var stringMode = !!state.decoder;
-  var objectMode = !!state.objectMode;
+  // nothing buffered
+  if (state.length === 0) return null;
+
   var ret;
-
-  // nothing in the list, definitely empty.
-  if (list.length === 0) return null;
-
-  if (length === 0) ret = null;else if (objectMode) ret = list.shift();else if (!n || n >= length) {
-    // read it all, truncate the array.
-    if (stringMode) ret = list.join('');else if (list.length === 1) ret = list[0];else ret = Buffer.concat(list, length);
-    list.length = 0;
+  if (state.objectMode) ret = state.buffer.shift();else if (!n || n >= state.length) {
+    // read it all, truncate the list
+    if (state.decoder) ret = state.buffer.join('');else if (state.buffer.length === 1) ret = state.buffer.head.data;else ret = state.buffer.concat(state.length);
+    state.buffer.clear();
   } else {
-    // read just some of it.
-    if (n < list[0].length) {
-      // just take a part of the first list item.
-      // slice is the same for buffers and strings.
-      var buf = list[0];
-      ret = buf.slice(0, n);
-      list[0] = buf.slice(n);
-    } else if (n === list[0].length) {
-      // first list is a perfect match
-      ret = list.shift();
-    } else {
-      // complex case.
-      // we have enough to cover it, but it spans past the first buffer.
-      if (stringMode) ret = '';else ret = bufferShim.allocUnsafe(n);
-
-      var c = 0;
-      for (var i = 0, l = list.length; i < l && c < n; i++) {
-        var _buf = list[0];
-        var cpy = Math.min(n - c, _buf.length);
-
-        if (stringMode) ret += _buf.slice(0, cpy);else _buf.copy(ret, c, 0, cpy);
-
-        if (cpy < _buf.length) list[0] = _buf.slice(cpy);else list.shift();
-
-        c += cpy;
-      }
-    }
+    // read part of list
+    ret = fromListPartial(n, state.buffer, state.decoder);
   }
 
+  return ret;
+}
+
+// Extracts only enough buffered data to satisfy the amount requested.
+// This function is designed to be inlinable, so please take care when making
+// changes to the function body.
+function fromListPartial(n, list, hasStrings) {
+  var ret;
+  if (n < list.head.data.length) {
+    // slice is the same for buffers and strings
+    ret = list.head.data.slice(0, n);
+    list.head.data = list.head.data.slice(n);
+  } else if (n === list.head.data.length) {
+    // first chunk is a perfect match
+    ret = list.shift();
+  } else {
+    // result spans more than one buffer
+    ret = hasStrings ? copyFromBufferString(n, list) : copyFromBuffer(n, list);
+  }
+  return ret;
+}
+
+// Copies a specified amount of characters from the list of buffered data
+// chunks.
+// This function is designed to be inlinable, so please take care when making
+// changes to the function body.
+function copyFromBufferString(n, list) {
+  var p = list.head;
+  var c = 1;
+  var ret = p.data;
+  n -= ret.length;
+  while (p = p.next) {
+    var str = p.data;
+    var nb = n > str.length ? str.length : n;
+    if (nb === str.length) ret += str;else ret += str.slice(0, n);
+    n -= nb;
+    if (n === 0) {
+      if (nb === str.length) {
+        ++c;
+        if (p.next) list.head = p.next;else list.head = list.tail = null;
+      } else {
+        list.head = p;
+        p.data = str.slice(nb);
+      }
+      break;
+    }
+    ++c;
+  }
+  list.length -= c;
+  return ret;
+}
+
+// Copies a specified amount of bytes from the list of buffered data chunks.
+// This function is designed to be inlinable, so please take care when making
+// changes to the function body.
+function copyFromBuffer(n, list) {
+  var ret = bufferShim.allocUnsafe(n);
+  var p = list.head;
+  var c = 1;
+  p.data.copy(ret);
+  n -= p.data.length;
+  while (p = p.next) {
+    var buf = p.data;
+    var nb = n > buf.length ? buf.length : n;
+    buf.copy(ret, ret.length - n, 0, nb);
+    n -= nb;
+    if (n === 0) {
+      if (nb === buf.length) {
+        ++c;
+        if (p.next) list.head = p.next;else list.head = list.tail = null;
+      } else {
+        list.head = p;
+        p.data = buf.slice(nb);
+      }
+      break;
+    }
+    ++c;
+  }
+  list.length -= c;
   return ret;
 }
 
@@ -14902,7 +15453,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":21,"_process":19,"buffer":11,"buffer-shims":10,"core-util-is":12,"events":13,"inherits":15,"isarray":17,"process-nextick-args":18,"string_decoder/":31,"util":9}],24:[function(require,module,exports){
+},{"./_stream_duplex":21,"./internal/streams/BufferList":26,"_process":19,"buffer":11,"buffer-shims":10,"core-util-is":12,"events":13,"inherits":15,"isarray":17,"process-nextick-args":18,"string_decoder/":32,"util":9}],24:[function(require,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -14999,7 +15550,6 @@ function Transform(options) {
 
   this._transformState = new TransformState(this);
 
-  // when the writable side finishes, then flush out anything remaining.
   var stream = this;
 
   // start out asking for a readable event once data is transformed.
@@ -15016,9 +15566,10 @@ function Transform(options) {
     if (typeof options.flush === 'function') this._flush = options.flush;
   }
 
+  // When the writable side finishes, then flush out anything remaining.
   this.once('prefinish', function () {
-    if (typeof this._flush === 'function') this._flush(function (er) {
-      done(stream, er);
+    if (typeof this._flush === 'function') this._flush(function (er, data) {
+      done(stream, er, data);
     });else done(stream);
   });
 }
@@ -15039,7 +15590,7 @@ Transform.prototype.push = function (chunk, encoding) {
 // an error, then that'll put the hurt on the whole operation.  If you
 // never call cb(), then you'll never get another chunk.
 Transform.prototype._transform = function (chunk, encoding, cb) {
-  throw new Error('Not implemented');
+  throw new Error('_transform() is not implemented');
 };
 
 Transform.prototype._write = function (chunk, encoding, cb) {
@@ -15069,8 +15620,10 @@ Transform.prototype._read = function (n) {
   }
 };
 
-function done(stream, er) {
+function done(stream, er, data) {
   if (er) return stream.emit('error', er);
+
+  if (data !== null && data !== undefined) stream.push(data);
 
   // if there's nothing in the write buffer, then that means
   // that nothing more will ever be provided
@@ -15099,6 +15652,10 @@ var processNextTick = require('process-nextick-args');
 
 /*<replacement>*/
 var asyncWrite = !process.browser && ['v0.10', 'v0.9.'].indexOf(process.version.slice(0, 5)) > -1 ? setImmediate : processNextTick;
+/*</replacement>*/
+
+/*<replacement>*/
+var Duplex;
 /*</replacement>*/
 
 Writable.WritableState = WritableState;
@@ -15141,7 +15698,6 @@ function WriteReq(chunk, encoding, cb) {
   this.next = null;
 }
 
-var Duplex;
 function WritableState(options, stream) {
   Duplex = Duplex || require('./_stream_duplex');
 
@@ -15163,6 +15719,7 @@ function WritableState(options, stream) {
   // cast to ints.
   this.highWaterMark = ~ ~this.highWaterMark;
 
+  // drain event flag.
   this.needDrain = false;
   // at the start of calling end()
   this.ending = false;
@@ -15237,7 +15794,7 @@ function WritableState(options, stream) {
   this.corkedRequestsFree = new CorkedRequest(this);
 }
 
-WritableState.prototype.getBuffer = function writableStateGetBuffer() {
+WritableState.prototype.getBuffer = function getBuffer() {
   var current = this.bufferedRequest;
   var out = [];
   while (current) {
@@ -15257,13 +15814,37 @@ WritableState.prototype.getBuffer = function writableStateGetBuffer() {
   } catch (_) {}
 })();
 
-var Duplex;
+// Test _writableState for inheritance to account for Duplex streams,
+// whose prototype chain only points to Readable.
+var realHasInstance;
+if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.prototype[Symbol.hasInstance] === 'function') {
+  realHasInstance = Function.prototype[Symbol.hasInstance];
+  Object.defineProperty(Writable, Symbol.hasInstance, {
+    value: function (object) {
+      if (realHasInstance.call(this, object)) return true;
+
+      return object && object._writableState instanceof WritableState;
+    }
+  });
+} else {
+  realHasInstance = function (object) {
+    return object instanceof this;
+  };
+}
+
 function Writable(options) {
   Duplex = Duplex || require('./_stream_duplex');
 
-  // Writable ctor is applied to Duplexes, though they're not
-  // instanceof Writable, they're instanceof Readable.
-  if (!(this instanceof Writable) && !(this instanceof Duplex)) return new Writable(options);
+  // Writable ctor is applied to Duplexes, too.
+  // `realHasInstance` is necessary because using plain `instanceof`
+  // would return false, as no `_writableState` property is attached.
+
+  // Trying to use the custom `instanceof` for Writable here will also break the
+  // Node.js LazyTransform implementation, which has a non-trivial getter for
+  // `_writableState` that would lead to infinite recursion.
+  if (!realHasInstance.call(Writable, this) && !(this instanceof Duplex)) {
+    return new Writable(options);
+  }
 
   this._writableState = new WritableState(options, this);
 
@@ -15523,7 +16104,7 @@ function clearBuffer(stream, state) {
 }
 
 Writable.prototype._write = function (chunk, encoding, cb) {
-  cb(new Error('not implemented'));
+  cb(new Error('_write() is not implemented'));
 };
 
 Writable.prototype._writev = null;
@@ -15612,10 +16193,75 @@ function CorkedRequest(state) {
   };
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":21,"_process":19,"buffer":11,"buffer-shims":10,"core-util-is":12,"events":13,"inherits":15,"process-nextick-args":18,"util-deprecate":32}],26:[function(require,module,exports){
+},{"./_stream_duplex":21,"_process":19,"buffer":11,"buffer-shims":10,"core-util-is":12,"events":13,"inherits":15,"process-nextick-args":18,"util-deprecate":33}],26:[function(require,module,exports){
+'use strict';
+
+var Buffer = require('buffer').Buffer;
+/*<replacement>*/
+var bufferShim = require('buffer-shims');
+/*</replacement>*/
+
+module.exports = BufferList;
+
+function BufferList() {
+  this.head = null;
+  this.tail = null;
+  this.length = 0;
+}
+
+BufferList.prototype.push = function (v) {
+  var entry = { data: v, next: null };
+  if (this.length > 0) this.tail.next = entry;else this.head = entry;
+  this.tail = entry;
+  ++this.length;
+};
+
+BufferList.prototype.unshift = function (v) {
+  var entry = { data: v, next: this.head };
+  if (this.length === 0) this.tail = entry;
+  this.head = entry;
+  ++this.length;
+};
+
+BufferList.prototype.shift = function () {
+  if (this.length === 0) return;
+  var ret = this.head.data;
+  if (this.length === 1) this.head = this.tail = null;else this.head = this.head.next;
+  --this.length;
+  return ret;
+};
+
+BufferList.prototype.clear = function () {
+  this.head = this.tail = null;
+  this.length = 0;
+};
+
+BufferList.prototype.join = function (s) {
+  if (this.length === 0) return '';
+  var p = this.head;
+  var ret = '' + p.data;
+  while (p = p.next) {
+    ret += s + p.data;
+  }return ret;
+};
+
+BufferList.prototype.concat = function (n) {
+  if (this.length === 0) return bufferShim.alloc(0);
+  if (this.length === 1) return this.head.data;
+  var ret = bufferShim.allocUnsafe(n >>> 0);
+  var p = this.head;
+  var i = 0;
+  while (p) {
+    p.data.copy(ret, i);
+    i += p.data.length;
+    p = p.next;
+  }
+  return ret;
+};
+},{"buffer":11,"buffer-shims":10}],27:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":22}],27:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":22}],28:[function(require,module,exports){
 (function (process){
 var Stream = (function (){
   try {
@@ -15635,13 +16281,13 @@ if (!process.browser && process.env.READABLE_STREAM === 'disable' && Stream) {
 }
 
 }).call(this,require('_process'))
-},{"./lib/_stream_duplex.js":21,"./lib/_stream_passthrough.js":22,"./lib/_stream_readable.js":23,"./lib/_stream_transform.js":24,"./lib/_stream_writable.js":25,"_process":19}],28:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":21,"./lib/_stream_passthrough.js":22,"./lib/_stream_readable.js":23,"./lib/_stream_transform.js":24,"./lib/_stream_writable.js":25,"_process":19}],29:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":24}],29:[function(require,module,exports){
+},{"./lib/_stream_transform.js":24}],30:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":25}],30:[function(require,module,exports){
+},{"./lib/_stream_writable.js":25}],31:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15770,7 +16416,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":13,"inherits":15,"readable-stream/duplex.js":20,"readable-stream/passthrough.js":26,"readable-stream/readable.js":27,"readable-stream/transform.js":28,"readable-stream/writable.js":29}],31:[function(require,module,exports){
+},{"events":13,"inherits":15,"readable-stream/duplex.js":20,"readable-stream/passthrough.js":27,"readable-stream/readable.js":28,"readable-stream/transform.js":29,"readable-stream/writable.js":30}],32:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15993,7 +16639,7 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":11}],32:[function(require,module,exports){
+},{"buffer":11}],33:[function(require,module,exports){
 (function (global){
 
 /**
@@ -16064,14 +16710,16 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
+arguments[4][15][0].apply(exports,arguments)
+},{"dup":15}],35:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -16661,4 +17309,4 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":33,"_process":19,"inherits":15}]},{},[7]);
+},{"./support/isBuffer":35,"_process":19,"inherits":34}]},{},[7]);

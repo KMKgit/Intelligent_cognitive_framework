@@ -6,6 +6,7 @@ import cPickle
 import json
 import numpy as np
 import codecs
+import time
 from os import getcwd
 from os import environ
 from os.path import dirname
@@ -31,7 +32,6 @@ try:
   columns = f.read().splitlines()
   t = json.load(p)
   k = int(t['k'])
-  random_seed = int(t['random_seed'])
   f.close()
   p.close()
   
@@ -40,7 +40,7 @@ try:
     csv_data = list(reader)
     n_samples = len(csv_data) - 1
     n_features = len(csv_data[0])
-    data = np.empty((n_samples, 2))
+    data = np.empty((n_samples, n_features))
     
     for i in range(n_samples):
       temp = []
@@ -48,44 +48,31 @@ try:
         temp.append(csv_data[i+1][j])
       data[i] = np.asarray(temp, dtype=np.float)
       
-  
-  
-  transformation = [[ 0.60834549, -0.63667341], [-0.40887718, 0.85253229]]
-  data_aniso = np.dot(data, transformation)
-  
-  if (random_seed == 0){
-    k_means = KMeans(n_clusters=k).fit(data)
-    k_means_tf = KMeans(n_clusters=k).fit(data_aniso)
-  }
-  else{
-    k_means = KMeans(n_clusters=k, random_state=random_seed).fit(data)
-    k_means_tf = KMeans(n_clusters=k, random_state=random_seed).fit(data_aniso)
-  }
-  
+  k_means = KMeans(n_clusters=k, random_state=0).fit(data)
   P = k_means.predict(data)
-  AP = k_means_tf.predict(data_aniso)
+  model_name = 'train_'+time.strftime("%Y%m_%d_%H_%M", time.localtime())
   
   out = open(PATH + '/data/' + sys.argv[1] + '/' + sys.argv[1] + '.out', 'w')
   retP = []
-  retAP = []
   for i in range(len(P)):
     retP.append(str(P[i]));
-    retAP.append(str(AP[i]));
   json.dump({'ntb':
               {
+                'model_name' : model_name,
                 'samples' : n_samples
               }
             ,
             'tb': 
               {
-                'predict' : retP,
-                'aniso_predict' : retAP
+                'predict' : retP
               }
             }, out, separators=(',',':'))
-  if not path.exists(PATH + '/data/' + sys.argv[1] + '/pkl'):
-    mkdir(PATH + '/data/' + sys.argv[1] + '/pkl')
-  joblib.dump(k_means, PATH + '/data/' + sys.argv[1] + '/pkl/' + sys.argv[1] + '.pkl')
-  joblib.dump(k_means_tf, PATH + '/data/' + sys.argv[1] + '/pkl/' + sys.argv[1] + '_tf.pkl')
+  
+  if not path.exists(PATH + '/data/' + sys.argv[1] + '/' + model_name):
+    mkdir(PATH + '/data/' + sys.argv[1] + '/' + model_name)
+  joblib.dump(k_means, PATH + '/data/' + sys.argv[1] + '/' + model_name + '/' + sys.argv[1] + '.pkl')
+  
   out.close()
+    
 except:
   print >> sys.stderr, sys.exc_info()[0]

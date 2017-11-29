@@ -5,7 +5,7 @@ var stableSort = require('stable');
 var ENTRY_PER_PAGE = 10;
 var sortPolicy = '';
 var asc = true;
-var colorClasses = ["active","","success","","warning","","danger","","info",""];
+var colorClasses = ["danger","warning","success"];
 var currentPage = 1;
 var prevWord = '';
 var data;
@@ -129,7 +129,7 @@ domready(function() {
     for (var i = startIndex; i < endIndex; ++i) {
       var tr = document.createElement('tr');
       tr.classList.add('text-center'); 
-      var color = colorClasses[i % 10];
+      var color = colorClasses[data[i].valid+1];
       if (color) tr.classList.add(color);
       var chkBox = document.createElement('input');
       chkBox.type = 'checkbox';
@@ -161,24 +161,62 @@ domready(function() {
       tr.appendChild(
         createCenterAlignedTd(document.createTextNode(data[i].write_time)));
         
-      var anchor = document.createElement('a');
-      var ie = document.createElement('i');
-      anchor.href = '/api/info?aid=' + data[i].api_key;
-      ie.className = 'fa fa-arrow-circle-right';
-      anchor.appendChild(ie);
-      tr.appendChild(createCenterAlignedTd(anchor));
-    
-      ie = document.createElement('i');
-      anchor = document.createElement('a');
-      if (data[i].valid == 1) {
+      (function() {
+        var anchor = document.createElement('a');
+        var ie = document.createElement('i');
+        anchor.href = '/api/info?aid=' + data[i].api_key;
         ie.className = 'fa fa-arrow-circle-right';
-        anchor.href = '/api?aid=' + data[i].api_key;
-      } else {
-        ie.className = 'fa fa-warning';
-        anchor.href = '/api/err?aid=' + data[i].api_key;
+        anchor.appendChild(ie);
+        tr.appendChild(createCenterAlignedTd(anchor));
+      })();
+      var select = document.createElement('select');
+      if (data[i].models) {
+        console.log(data[i].models);
+        for (var j = 0; j < data[i].models.length; ++j) {
+          var option = document.createElement('option');
+          option.innerHTML = data[i].models[j];
+          if (data[i].modelKey == data[i].models[j]) {
+            option.selected = true;
+          }
+          select.appendChild(option);
+        }
       }
-      anchor.appendChild(ie);
-      tr.appendChild(createCenterAlignedTd(anchor));
+      tr.appendChild(createCenterAlignedTd(select));
+      
+      (function() {
+        var ie = document.createElement('i');
+        var anchor = document.createElement('a');
+        if (data[i].valid == 1) {
+          ie.className = 'fa fa-arrow-circle-right';
+          anchor.href = '/api?aid=' + data[i].api_key;
+        } else {
+          ie.className = 'fa fa-warning';
+          anchor.href = '/api/err?aid=' + data[i].api_key;
+        }
+        anchor.appendChild(ie);
+        tr.appendChild(createCenterAlignedTd(anchor));
+      })();
+      (function() {
+        // var anchor = document.createElement('a');
+        // var ie = document.createElement('i');
+        // anchor.href = '/api/info?aid=' + data[i].api_key;
+        // ie.className = 'fa fa-arrow-circle-right';
+        // anchor.appendChild(ie);
+        // tr.appendChild(createCenterAlignedTd(anchor));
+      
+        var ie = document.createElement('i');
+        var anchor = document.createElement('a');
+        if (data[i].valid == 1) {
+          ie.className = 'fa fa-arrow-circle-right';
+          anchor.href = '/relearning?aid=' + data[i].api_key;
+        } else {
+          ie.className = 'fa fa-warning';
+          anchor.href = '/api/err?aid=' + data[i].api_key;
+        }
+        anchor.appendChild(ie);
+        tr.appendChild(createCenterAlignedTd(anchor));
+        // tbody.appendChild(tr);
+      })();
       tbody.appendChild(tr);
     }
   }

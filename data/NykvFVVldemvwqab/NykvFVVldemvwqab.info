@@ -1,0 +1,1 @@
+[{"column":"label","types":"Integer"},{"column":"Hour","types":"Integer"},{"column":"Day","types":"Integer"},{"column":"DayOfWeek","types":"Integer"},{"column":"Month","types":"Integer"},{"column":"Humidity","types":"Integer"},{"column":"Temp","types":"Integer"}]

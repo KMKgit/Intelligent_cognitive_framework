@@ -15,6 +15,7 @@ var passport = require('passport');
 var util = require('util');
 var helmet = require('helmet');
 var csvParse = require('csv-parse');
+var exec = require('child_process').exec;
 var execFile = require('child_process').execFile;
 var execFileSync = require('child_process').execFileSync;
 var randtoken = require('rand-token');
@@ -22,10 +23,11 @@ var formidable = require('formidable');
 var login = require('connect-ensure-login');
 var ZolgwaStrategy = require('passport-zolgwa');
 var CMD = require('./js/common-const').cmd;
-
+var spawn = require('child_process').spawn;
+var amazonAddress = 'http://52.78.70.47';
 
 var GLOBAL = {
-  serverAddress: 'http://164.125.70.62',
+  serverAddress: amazonAddress,
   serverPort: 8080,
   mongoStoreOptions: {
     ttl: 60 * 60 * 24 * 7,
@@ -36,8 +38,6 @@ var GLOBAL = {
   CSV_ROOT: __dirname + /csv/,
   db: null
 };
-
-
 
 var DB_NAME = {
   SESSION: 'zolgwa',
@@ -111,12 +111,12 @@ function dateFormat(data) {
 }
 
 passport.use('oauth2', new ZolgwaStrategy({
-    authorizationURL: 'http://164.125.70.62:3000/auth',
-    tokenURL: 'http://164.125.70.62:3000/token',
+    authorizationURL: amazonAddress + ':3000/auth',
+    tokenURL: amazonAddress + ':3000/token',
     clientID: '123-456-789',
     clientSecret: 'shhh-its-a-secret',
-    callbackURL: 'http://164.125.70.62:8080/oauth2/callback',
-    profileURL: 'http://164.125.70.62:3000/api/me',
+    callbackURL: amazonAddress + ':8080/oauth2/callback',
+    profileURL: amazonAddress  + ':3000/api/me',
     passReqToCallback: true
   },
   function(req, accessToken, refreshToken, profile, done) {
@@ -314,7 +314,7 @@ app.get('/learningapi', login.ensureLoggedIn(), function(req, res, next) {
   
   GLOBAL.db.collection(TABLE_NAME.API).find({user_id: req.user.id, valid:0}).toArray(function(err, doc) {
     if (err) return printError(err);
-    console.log(doc)
+    console.log(doc);
     var ENTRY_PER_PAGE = 10;
     var maxPage = Math.max(1, Math.floor((doc.length - 1) / ENTRY_PER_PAGE + 1)); 
     console.log(maxPage);
@@ -371,7 +371,10 @@ app.get('/api/info', login.ensureLoggedIn(), function(req, res, next) {
     if (err) {
       return res.send(err);
     }
-    return res.send(doc.params);
+    
+    var info = JSON.parse(fs.readFileSync(__dirname + '/data/' + doc.api_key + '/' + doc.api_key + '.out', 'utf-8')).ntb;
+    info.params = doc.params;
+    return res.send(info);
   });
 });
 
@@ -465,6 +468,11 @@ app.post('/test_upload', login.ensureLoggedIn(), function(req, res, next) {
       user_id: req.user.id,
       api_key: randomApikey,
       api_name: body.apiName,
+      //valid: 1,
+      // modelKey: md,
+      // models: [md],
+      modelKey: '',
+      models: [],
       valid: 0,
       method: body.method,
       write_time: body.writeTime,
@@ -481,27 +489,79 @@ app.post('/test_upload', login.ensureLoggedIn(), function(req, res, next) {
       var exePy = CMD[body.method];
       var exeParam = [__dirname + '/py/' + exePy + '/' + exePy + '.py'];
       exeParam.push(randomApikey);
-      execFile('python', exeParam, function(err, stdout, stderr) {
-        if (err) {
-          return printError(err);  
-        }
-        console.log('stdout', stdout);
-        console.log('stderr', stderr);
-        if (stderr) {
+   /*   var spawn = require('child_process').spawn;
+      var execPycmd= spawn('python', exeParam);
+      
+      execPycmd.stdout.on('data', function(data){
+        var str = data.toString();
+        console.log(str);
+      });
+      execPycmd.stderr.on('data',function(data){
+        console.log(data)
+        GLOBAL.db.collection(TABLE_NAME.API).updateOne({api_key: randomApikey},
+          {$set:{valid:-1, err: data}}, function(err, doc) {
+          if (err) {
+            return printError(err);
+          }       
+        });     
+      });
+      execPycmd.on('data', function(data){
+          GLOBAL.db.collection(TABLE_NAME.API).updateOne({api_key: randomApikey}, {$set:{valid: 1}}, function(err, doc) {
+            if (err) {
+              return printError(err);
+            } 
+          });
+      });
+      */
+      var execPycmd = spawn('python', exeParam);
+      var Data = '';
+      var Err = '';
+      execPycmd.stdout.on('data', function(data) {
+        var str = data.toString();
+        Data += str;
+      });
+      execPycmd.stderr.on('data', function(data) {
+        var str = data.toString();
+        Err += str;
+      });
+      execPycmd.on('close', function(code) {
+        if (Err) {
           GLOBAL.db.collection(TABLE_NAME.API).updateOne({api_key: randomApikey},
-            {$set:{valid:-1, err: stderr}}, function(err, doc) {
+            {$set:{valid:-1, err: Err}}, function(err, doc) {
             if (err) {
               return printError(err);
             }       
-          });     
+          });
         } else {
-          GLOBAL.db.collection(TABLE_NAME.API).updateOne({api_key: randomApikey}, {$set:{valid: 1}}, function(err, doc) {
+          var md = JSON.parse(fs.readFileSync(__dirname + '/data/' + randomApikey + '/' + randomApikey + '.out', 'utf-8')).ntb.model_name;
+          GLOBAL.db.collection(TABLE_NAME.API).updateOne({api_key: randomApikey}, {$set:{valid: 1, modelKey: md, models: [md]}}, function(err, doc) {
             if (err) {
               return printError(err);
             } 
           });
         }
       });
+      // execFile('python', exeParam, function(err, stdout, stderr) {
+      //   if (err) {
+      //     return printError(err);  
+      //   }
+      //   console.log('stdout', stdout);
+      //   console.log('stderr', stderr);
+      //   if (stderr) {
+      //     GLOBAL.db.collection(TABLE_NAME.API).updateOne({api_key: randomApikey},
+      //       {$set:{valid:-1, err: stderr}}, function(err, doc) {
+      //       if (err) {
+      //         return printError(err);
+      //       }       
+      //     });     
+      //   } else {
+      //     GLOBAL.db.collection(TABLE_NAME.API).updateOne({api_key: randomApikey}, {$set:{valid: 1}}, function(err, doc) {
+      //       if (err) {
+      //         return printError(err);
+      //       } 
+      //     });
+      //   }
+      // });
     });
     return res.json({
       message: 'end'
@@ -576,6 +636,7 @@ app.post('/test', login.ensureLoggedIn(), function(req, res, next) {
         var exeParam = [__dirname + '/py/' + exePy + '/test_' + exePy + '.py'];
         exeParam.push(body.apiKey);
         exeParam.push(randomTestNumber);
+        exeParam.push(body.model);
         execFile('python', exeParam, function(err, stdout, stderr) {
           console.log(err); 
           console.log(stdout);
@@ -614,6 +675,7 @@ app.post('/run', function(req, res, next) {
   var inp = body.inp;
   var keys = [];
   var values = [];
+  
   for (var key in inp) {
     keys.push(key);
     values.push(inp[key]);
@@ -621,24 +683,28 @@ app.post('/run', function(req, res, next) {
   
   var inpStr = keys.join(',') + '\n' + values.join(',');
   console.log(inpStr);
+  
   fs.writeFile(__dirname + '/data/' + body.apiKey + '/request/' + randNum + '.csv', inpStr, 'utf-8', function(err, result) {
     if (err) {
       printError(err);
       return res.json({
         err: err
       });
-    }      
-    var exeParam = [__dirname + '/py/' + exePy + '/request_' + exePy + '.py', body.apiKey, randNum];
-    exeParam.push(randNum);
+    } 
+    
+    var exeParam = [__dirname + '/py/' + exePy + '/request_' + exePy + '.py', body.apiKey, randNum, body.model];
     execFile('python', exeParam, function(err, stdout, stderr) {
-      console.log(err);
+      if(err){}
+      //console.log(err);
       console.log(stdout);
       console.log(stderr);
+      
       if (stderr) {
         return res.json({
           err: stderr
         });
       }
+      
       fs.readFile(__dirname + '/data/' + body.apiKey + '/request/' + randNum + '.req', 'utf-8', function(err, result) {
         if (err) {
           return res.json({
@@ -656,7 +722,7 @@ app.post('/run', function(req, res, next) {
           });
         }
       });
-    });
+    });      
   });
 });
 
@@ -813,8 +879,30 @@ MongoClient.connect(mongoUrl, function(err, db) {
   }
   console.log('Mongo client connected');
   GLOBAL.db = db;
+  
+
   server.listen(GLOBAL.serverPort, function() {
     console.log(util.format('Server is running. %s:%d', 
         GLOBAL.serverAddress, GLOBAL.serverPort));
+    
+    //find TABLE
+    //GLOBAL.db.collection(TABLE_NAME.USER).find({}).toArray(function(err, doc){
+    //    if(err) return printError(err);
+    //    console.log(doc);
+    //});
+    
+    //ready // backend run to EWS service
+    GLOBAL.db.collection(TABLE_NAME.API).find({method:"Energy_Watt_Service"}).forEach(function(doc) {
+      //var exeParam = 'python py/energy_watt_service/ready_request_energy_watt_service.py ' 
+      //                + doc.api_key + ' ' + doc.modelKey ;
+      var exeParam = '(while [ 1 ]; do sleep 1; done) | python py/energy_watt_service/backend_request_energy_watt_service.py ' 
+                      + doc.api_key + ' ' + doc.modelKey ;
+      exec(exeParam, function(err, stdout, stderr){
+        if(err) console.log("Process Killed : " + doc.api_key);
+        console.log('exit EWS : ' + doc.api_key);
+      });
+      console.log('begin EWS : ' + doc.api_key);
+    });
+
   });
 });
